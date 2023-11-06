@@ -677,7 +677,7 @@ margin: -15px 0px;
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <widget class="QGraphicsView" name="graphicsView">
+            <widget class="QGraphicsView" name="graphicsView_original">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -702,7 +702,7 @@ margin: -15px 0px;
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <widget class="QGraphicsView" name="graphicsView_2">
+             <widget class="QGraphicsView" name="graphicsView_modified">
               <property name="geometry">
                <rect>
                 <x>0</x>
@@ -729,7 +729,7 @@ margin: -15px 0px;
      <x>0</x>
      <y>0</y>
      <width>1606</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
