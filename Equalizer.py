@@ -25,6 +25,8 @@ from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QMainWi
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from qtawesome import icon
+from scipy import signal
 
 
 MainUI, _ = loadUiType(path.join(path.dirname(__file__), 'equalizer.ui'))
@@ -58,7 +60,6 @@ class MainApp(QMainWindow, MainUI):
         self.y_fig_modified = []
         self.modified_signal = False
         self.line = None
-        # self.line2 = None
         self.ani_2 = None
         self.ani_1 = None
         self.specific_row = 0
@@ -72,6 +73,7 @@ class MainApp(QMainWindow, MainUI):
         self.media_player = QMediaPlayer()
         self.media_player_modified_signal = QMediaPlayer()
         self.handle_buttons()
+        self.styles()
 
     def handle_buttons(self):
         self.mode_options.currentIndexChanged.connect(self.show_sliders)
@@ -95,10 +97,27 @@ class MainApp(QMainWindow, MainUI):
         self.animal_slider1.valueChanged.connect(lambda: self.band_width('elephant'))
         QCoreApplication.processEvents()
         self.Timer = QTimer(self)
+        self.graphicsView_windowing.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.graphicsView_windowing.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.check_spectro.stateChanged.connect(self.check_spectro_state_changed)
 
-    def play_pause_audio(self,button_name):
+    def styles(self):
+        zoom_in_icon = icon("ei.zoom-in", color='black')
+        zoom_out_icon = icon("ei.zoom-out", color="black")
+        self.zoom_in_btn.setIcon(zoom_in_icon)
+        self.zoom_out_btn.setIcon(zoom_out_icon)
+        speed_up_icon = icon("ph.trend-up-bold", color="black")
+        speed_down_icon = icon("ph.trend-down-bold", color="black")
+        self.speed_up_btn.setIcon(speed_up_icon)
+        self.speed_down_btn.setIcon(speed_down_icon)
+        pan_icon = icon("fa5s.hand-paper", color="black")
+        self.pan_btn.setIcon(pan_icon)
+        reset_icon = icon("msc.debug-restart", color="black")
+        self.reset_btn.setIcon(reset_icon)
+
+    def play_pause_audio(self, button_name):
         # Toggling the Play and Pause for the audio
-        if button_name == self.play_pause_audio_button                                           :
+        if button_name == self.play_pause_audio_button:
             if self.play_pause_audio_button.text() == "►":
                 self.play_pause_audio_button.setText('❚❚')
                 self.ani_1.event_source.start()
@@ -107,7 +126,6 @@ class MainApp(QMainWindow, MainUI):
                 self.play_pause_audio_button.setText('►')
                 self.ani_1.event_source.stop()
                 self.media_player.pause()
-
         else:
             if self.play_pause_audio_button_2.text() == "►":
                 self.play_pause_audio_button_2.setText('❚❚')
@@ -118,10 +136,7 @@ class MainApp(QMainWindow, MainUI):
                 self.ani_2.event_source.stop()
                 self.media_player_modified_signal.pause()
 
-
-
-
-    def set_audio_position(self,media_name,audio_progress):
+    def set_audio_position(self, media_name, audio_progress):
         # Connecting the media player to the progress slider
         if audio_progress.maximum() != (media_name.duration()):
             audio_progress.setMaximum(media_name.duration())
@@ -139,13 +154,13 @@ class MainApp(QMainWindow, MainUI):
             self.media_player.play()
             self.play_pause_audio_button.setText('❚❚')
 
-    def Write_modified_signal(self,modified_signal):
+    def Write_modified_signal(self, modified_signal):
         # "C:\Users\lama zakaria\Desktop\Equalizer\animalsSounds.wav"
         directory_path = os.path.dirname(self.file_path)
         file_path = str(self.file_path)
         print(f"file:{file_path}")
         file_path = file_path.split('/')[-1].split('.')[0] + "modified.wav"
-        file_path = directory_path + '/' +file_path
+        file_path = directory_path + '/' + file_path
         print(f"file:{file_path}")
         data = wave.open(file_path, mode='wb')
         fs = self.sampling_rate
@@ -154,7 +169,6 @@ class MainApp(QMainWindow, MainUI):
         data.setframerate(fs)
         data.setnframes(self.n_samples)
         data.writeframes(modified_signal)
-
         data.close()
         self.modified_signal = True
         self.media_player_modified_signal.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
@@ -162,36 +176,44 @@ class MainApp(QMainWindow, MainUI):
         self.play_pause_audio_button_2.setText('❚❚')
         self.play_pause_audio_button.setText('►')
         self.media_player.pause()
-
-
         self.Read_signal(file_path)
 
-
-
     def Read_signal(self, file_path):
-
         data = wave.open(file_path, mode='rb')
-
-        data_signal = data.readframes(-1)
-
+        self.data_signal = data.readframes(-1)
         self.type_data = data.getsampwidth()
         print(f"type:{self.type_data}")
         self.n_samples = data.getnframes()
         print(f"n_samples:{self.n_samples,data.getnchannels()}")
-        length_data = self.n_samples
-        data_signal = np.frombuffer(data_signal, dtype="int"+str(self.type_data*8))
+        self.length_data = self.n_samples
+        self.data_signal = np.frombuffer(self.data_signal, dtype="int"+str(self.type_data*8))
         self.sampling_rate = data.getframerate()
         if self.modified_signal:
             print(f"fileeeeeeeee:{file_path}")
             self.ax_modified = self.fig_modified.add_subplot(111)
-            self.Plot(data_signal, self.sampling_rate, length_data, self.ax_modified,self.animate_fig_modified)
+            self.Plot(self.data_signal, self.sampling_rate, self.length_data,
+                      self.ax_modified, self.animate_fig_modified)
         else:
-            self.data_original =  data_signal
+            self.data_original = self.data_signal
             self.ax_original = self.fig_original.add_subplot(111)
-            self.Plot(data_signal, self.sampling_rate, length_data, self.ax_original,self.animate_fig_original)
+            self.Plot(self.data_signal, self.sampling_rate, self.length_data,
+                      self.ax_original, self.animate_fig_original)
 
+    def check_spectro_state_changed(self, state):
+        if state == 2:  # 2 corresponds to checked state
+            self.plot_spectrogram(self.data_signal, self.sampling_rate)
+        else:
+            self.Plot(self.data_signal, self.sampling_rate, self.length_data, self.ax_original, self.animate_fig_original)
 
-
+    def plot_spectrogram(self, original_audio, sampling_rate):
+        f, t, Sxx = signal.spectrogram(original_audio, sampling_rate, scaling='spectrum')
+        plt.pcolormesh(t, f, np.log10(Sxx))
+        plt.ylabel('f [Hz]')
+        plt.xlabel('t [sec]')
+        scene = QtWidgets.QGraphicsScene(self)
+        canvas_3 = FigureCanvasQTAgg(self.fig_spectrogram_original)
+        self.graphicsView_original.setScene(scene)
+        scene.addWidget(canvas_3)
 
     def animate_fig_original(self, i, length_data, data):
         if self.modified_signal:
@@ -201,12 +223,11 @@ class MainApp(QMainWindow, MainUI):
                                        frames=no_of_frames, repeat=False, fargs=(length_data, data))
             self.specific_row = 0
             self.y_fig_original = []
-            self.x_fig_original =[]
+            self.x_fig_original = []
             # self.modified_signal = False
 
         # print(f"leng:{length_data}")
         self.specific_row += 1000
-
 
         # if self.media_player.state() == QMediaPlayer.StoppedState :
         #     self.media_player.play()
@@ -220,9 +241,6 @@ class MainApp(QMainWindow, MainUI):
             data_sliced = data_array[:self.specific_row]
             time_sliced = time_array[:self.specific_row]
             self.y_fig_original, self.x_fig_original = data_sliced.tolist(), time_sliced.tolist()
-
-
-
             self.line1.set_data(self.x_fig_original, self.y_fig_original)
 
             if self.specific_row > 1000:
@@ -230,7 +248,6 @@ class MainApp(QMainWindow, MainUI):
             return self.line1,
         else:
             return
-
 
     def animate_fig_modified(self, i, length_data, data):
         print(f"leng:{length_data}")
@@ -257,8 +274,7 @@ class MainApp(QMainWindow, MainUI):
         else:
             return
 
-
-    def Plot(self, data, sampling_rate, length_data,axes,animation_func):
+    def Plot(self, data, sampling_rate, length_data, axes, animation_func):
         no_of_points = length_data
         # self.data = data
         # print(self.data[:10])
@@ -286,84 +302,57 @@ class MainApp(QMainWindow, MainUI):
 
             self.line2, = self.ax_modified.plot([], [], color='r')
 
-            self.ani_2 = FuncAnimation( self.fig_modified, animation_func, interval=Delay_interval,
+            self.ani_2 = FuncAnimation(self.fig_modified, animation_func, interval=Delay_interval,
                                        frames=no_of_frames, repeat=False, fargs=(length_data, data))
             QCoreApplication.processEvents()
-
-
             # scene2= QtWidgets.QGraphicsScene()
             canvas = FigureCanvasQTAgg(self.fig_modified)
             self.graphicsView_modified.setScene(scene)
             scene.addWidget(canvas)
-
-
         else:
-
             QCoreApplication.processEvents()
             self.line1, = self.ax_original.plot([], [], color='b')
-            self.ani_1 = FuncAnimation( self.fig_original, animation_func, interval=Delay_interval,
+            self.ani_1 = FuncAnimation(self.fig_original, animation_func, interval=Delay_interval,
                                        frames=no_of_frames, repeat=False, fargs=(length_data, data))
-
-
             canvas_1 = FigureCanvasQTAgg(self.fig_original)
             QCoreApplication.processEvents()
             self.graphicsView_original.setScene(scene)
             scene.addWidget(canvas_1)
 
-
-
-    def band_width(self,name):
+    def band_width(self, name):
         band_width = []
         if name == "elephant":
-            band_width =[-1000,1000]
+            band_width = [-1000, 1000]
             amp = int(self.animal_slider1.value())
             print(f"amp:{amp}")
-            self.Modify_frequency(band_width,amp)
+            self.Modify_frequency(band_width, amp)
 
-
-
-
-
-    def Modify_frequency(self,band_width,modified_amp):
+    def Modify_frequency(self, band_width, modified_amp):
         print(f"amp:{modified_amp}")
-        self.modified_signal =True
+        self.modified_signal = True
         # w = np.hanning(self.n_samples)
         # windowed_signal = self.data_original * w
         # modified_signal = self.data_original.copy() ## can write on array
-
         frequencies, amplitudes, modified_signal = self.Fourier_Transform(self.data_original)
         print(f"freq:{frequencies[19999]}")
         band_index = np.logical_and(frequencies >= band_width[0], frequencies <= band_width[1])
-
         modified_signal[band_index] = 0.5 * modified_signal[band_index]
-
         modified_signal_after = ifft(modified_signal)
         print(f"modify_data:{modified_signal_after}")
         new_data = np.array(modified_signal_after, dtype="int16")
-
-
-
-
         self.Write_modified_signal(new_data)
 
-
-    def Fourier_Transform(self,data):
+    def Fourier_Transform(self, data):
         signal = fft(data)
         frequencies = fftfreq(len(signal), 1/self.sampling_rate)
         amplitudies = np.abs(signal)/len(signal)
         return frequencies, amplitudies, signal
 
-
-    def Plot_frequency_spectrum(self,signal):
-        frequencies, amplitudes ,signal = self.Fourier_Transform(signal)
+    def Plot_frequency_spectrum(self, signal):
+        frequencies, amplitudes, signal = self.Fourier_Transform(signal)
         self.ax_frequecies = self.fig_frequecies.add_subplot(111)
         self.ax_original.set_position([0.05, 0.24, 0.75, 0.65])
-        self.ax_frequecies.plot(frequencies,amplitudes,color='b')
-
-
-
-
-
+        self.ax_frequecies.plot(frequencies, amplitudes, color='b')
 
     def show_sliders(self):
         self.mode_index = self.mode_options.currentIndex()
