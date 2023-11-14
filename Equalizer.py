@@ -61,10 +61,13 @@ class MainApp(QMainWindow, MainUI):
         self.fig_frequecies = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
         self.ax_modified.set_position([0.1, 0.3, 0.75, 0.65])
         self.ax_original.set_position([0.1, 0.3, 0.75, 0.65])
+        self.ax_frequecies = self.fig_frequecies.add_subplot(111)
+        self.ax_frequecies.set_position([0.1, 0.24, 0.75, 0.65])
         self.x_fig_original = []
         self.x_fig_modified = []
         self.y_fig_original = []
         self.y_fig_modified = []
+
         self.Delay_interval = 200
         self.pause = False
         self.modified_signal = False
@@ -241,7 +244,15 @@ class MainApp(QMainWindow, MainUI):
         if self.modified_signal:
             print(f"fileeeeeeeee:{file_path}")
 
-            self.Plot(data_signal, self.sampling_rate, end_time, self.ax_modified,self.animate_fig_modified)
+            QCoreApplication.processEvents()
+
+            self.scene2= QtWidgets.QGraphicsScene()
+            canvas = FigureCanvasQTAgg(self.fig_modified)
+            self.graphicsView_modified.setScene(self.scene2)
+            self.scene2.addWidget(canvas)
+
+
+            # self.Plot(data_signal, self.sampling_rate, end_time, self.ax_modified,self.animate_fig_modified)
         else:
             self.data_original = data_signal
 
@@ -283,13 +294,13 @@ class MainApp(QMainWindow, MainUI):
                 self.y_fig_modified = []
                 self.x_fig_modified = []
 
-            self.line2,= self.ax_modified.plot([], [], color='r')
-            self.ax_modified.set_ylim(min(data),max(data))
+            self.ax_frequecies.clear()
+            self.line2, = self.ax_modified.plot([], [], color='r')
+            self.ax_modified.set_ylim(min(self.modified_signal_after_inverse), max(self.modified_signal_after_inverse))
+            self.Plot_frequency_spectrum(self.modified_signal_after_inverse)
             self.ani_2 = FuncAnimation(self.fig_modified, self.animate_fig_modified, interval=self.Delay_interval,
-                                       frames=no_of_frames, repeat=False, fargs=(len(data), data), blit=False)
-
-
-
+                                       frames=no_of_frames, repeat=False, fargs=(
+                len(self.modified_signal_after_inverse), self.modified_signal_after_inverse), blit=False)
 
         print(i)
 
@@ -349,30 +360,32 @@ class MainApp(QMainWindow, MainUI):
 
         axes.set_ylim(min(data), max(data))
 
-        scene = QtWidgets.QGraphicsScene()
+
         QCoreApplication.processEvents()
         if len(self.modified_signal_after_inverse) > 1:
             print("hallllo")
 
             QCoreApplication.processEvents()
 
-            # scene2= QtWidgets.QGraphicsScene()
+            self.scene2= QtWidgets.QGraphicsScene()
             canvas = FigureCanvasQTAgg(self.fig_modified)
-            self.graphicsView_modified.setScene(scene)
-            scene.addWidget(canvas)
+            self.graphicsView_modified.setScene(self.scene2)
+            self.scene2.addWidget(canvas)
 
 
         else:
 
             QCoreApplication.processEvents()
             self.line1, = self.ax_original.plot([], [], color='b')
+            self.Plot_frequency_spectrum(data)
             self.ani_1 = FuncAnimation(self.fig_original, animation_func, interval=self.Delay_interval,
                                        frames=no_of_frames, repeat=False, fargs=(len(data), data), blit=False)
 
+            self.scene = QtWidgets.QGraphicsScene()
             canvas_1 = FigureCanvasQTAgg(self.fig_original)
             QCoreApplication.processEvents()
-            self.graphicsView_original.setScene(scene)
-            scene.addWidget(canvas_1)
+            self.graphicsView_original.setScene(self.scene)
+            self.scene.addWidget(canvas_1)
 
     def band_width(self, name):
         band_width = []
@@ -447,7 +460,8 @@ class MainApp(QMainWindow, MainUI):
         print(f"modify_data:{self.modified_signal_after_inverse}")
         # new_data = np.array(modified_signal_after.real)
         # print(new_data)
-        self.modified_signal_after_inverse = np.array(self.modified_signal_after_inverse,dtype = 'int32')
+        self.modified_signal_after_inverse = np.array(self.modified_signal_after_inverse.real)
+        # self.modified_signal_after_inverse = np.array(np.abs(self.modified_signal_after_inverse))
         self.Write_modified_signal(self.modified_signal_after_inverse)
 
     def Fourier_Transform(self, data):
@@ -458,8 +472,13 @@ class MainApp(QMainWindow, MainUI):
 
     def Plot_frequency_spectrum(self, signal):
         frequencies, amplitudes, signal = self.Fourier_Transform(signal)
-        self.ax_frequecies = self.fig_frequecies.add_subplot(111)
-        self.ax_original.set_position([0.05, 0.24, 0.75, 0.65])
+        self.scene3 = QtWidgets.QGraphicsScene()
+
+        canvas3 = FigureCanvasQTAgg(self.fig_frequecies)
+        self.graphicsView_windowing.setScene(self.scene3)
+        self.scene3.addWidget(canvas3)
+        self.ax_frequecies.set_xlim(0,max(frequencies))
+
         self.ax_frequecies.plot(frequencies, amplitudes, color='b')
 
     def show_sliders(self):
