@@ -809,7 +809,7 @@ margin: -15px 0px;
           <string notr="true">background-color: yellow</string>
          </property>
          <property name="text">
-          <string>2000 HZ</string>
+          <string/>
          </property>
         </widget>
         <widget class="QLabel" name="uni_freq2">
@@ -842,7 +842,7 @@ margin: -15px 0px;
           <string notr="true">background-color: yellow</string>
          </property>
          <property name="text">
-          <string>5000HZ</string>
+          <string/>
          </property>
         </widget>
         <widget class="QLabel" name="uni_freq3">
@@ -875,7 +875,7 @@ margin: -15px 0px;
           <string notr="true">background-color: yellow</string>
          </property>
          <property name="text">
-          <string>7000HZ</string>
+          <string/>
          </property>
         </widget>
         <widget class="QLabel" name="uni_freq4">
@@ -1072,6 +1072,138 @@ margin: -15px 0px;
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+        <widget class="QLabel" name="owl_label">
+         <property name="geometry">
+          <rect>
+           <x>240</x>
+           <y>330</y>
+           <width>41</width>
+           <height>25</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>15</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">/*background-color: green</string>
+         </property>
+         <property name="text">
+          <string>Owl</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="frog_label">
+         <property name="geometry">
+          <rect>
+           <x>400</x>
+           <y>330</y>
+           <width>41</width>
+           <height>25</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>15</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">/*background-color: green</string>
+         </property>
+         <property name="text">
+          <string>Frog</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="grasshoppers_label">
+         <property name="geometry">
+          <rect>
+           <x>540</x>
+           <y>330</y>
+           <width>111</width>
+           <height>25</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>15</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">/*background-color: green</string>
+         </property>
+         <property name="text">
+          <string>Grasshoppers</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="canary_label">
+         <property name="geometry">
+          <rect>
+           <x>720</x>
+           <y>330</y>
+           <width>61</width>
+           <height>25</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>15</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">/*background-color: green</string>
+         </property>
+         <property name="text">
+          <string>Canary</string>
          </property>
         </widget>
        </widget>

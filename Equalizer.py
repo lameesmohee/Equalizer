@@ -14,13 +14,11 @@ import time
 import numpy as np
 import librosa
 import soundfile as sf
-from scipy.signal import hamming
 from scipy.fft import ifft
 from scipy.fftpack import fft,fftfreq
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 plt.style.use('ggplot')
-
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QMainWindow, QVBoxLayout, QWidget
@@ -29,6 +27,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPu
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from qtawesome import icon
 from scipy import signal
+from scipy.misc import electrocardiogram
+import pandas as pd
+import scipy as sc
 
 
 MainUI, _ = loadUiType(path.join(path.dirname(__file__), 'equalizer.ui'))
@@ -52,6 +53,7 @@ class MainApp(QMainWindow, MainUI):
                                  self.animal_slider3, self.animal_slider4, self.ecg_slider]
         self.uni_labels_list = [self.uni_freq1, self.uni_freq2, self.uni_freq3, self.uni_freq4, self.uni_freq5,
                                 self.uni_freq6, self.uni_freq7, self.uni_freq8, self.uni_freq9, self.uni_freq10]
+        self.animal_labels_list = [self.owl_label, self.frog_label, self.grasshoppers_label, self.canary_label]
         self.mode_index = 0
         self.fig_original = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
         self.fig_modified = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
@@ -67,7 +69,6 @@ class MainApp(QMainWindow, MainUI):
         self.x_fig_modified = []
         self.y_fig_original = []
         self.y_fig_modified = []
-
         self.Delay_interval = 200
         self.pause = False
         self.check_ended_animation_1 =False
@@ -110,8 +111,12 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.animal_slider1.setMinimum(0)
         QCoreApplication.processEvents()
-        self.animal_slider1.valueChanged.connect(lambda: self.band_width('elephant'))
+        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl'))
+        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog'))
+        self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers'))
+        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary'))
         QCoreApplication.processEvents()
+        self.ecg_slider.valueChanged.connect(self.arrhythima)
         self.graph_btn_play.clicked.connect(self.toggle_channel_animation)
         QCoreApplication.processEvents()
         self.speed_down_btn.clicked.connect(self.decrease_speed)
@@ -129,8 +134,6 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.graphicsView_windowing.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.check_spectro.stateChanged.connect(self.check_spectro_state_changed)
-
-
         self.uni_slider1.valueChanged.connect(lambda: self.band_width('1'))
         QCoreApplication.processEvents()
         self.uni_slider2.valueChanged.connect(lambda: self.band_width('2'))
@@ -224,7 +227,6 @@ class MainApp(QMainWindow, MainUI):
 
         except Exception as e:
             print(f"Error: {e}")
-
         print("Modified file written to:", file_path)
         # Continue with the rest of your code
         self.modified_signal = True
@@ -238,34 +240,29 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.media_player.pause()
         QCoreApplication.processEvents()
-
         self.Read_signal(file_path)
 
     def Read_signal(self, file_path):
-
-        self.data_original, self.sampling_rate = librosa.load(file_path,sr=44100)
-        data_signal = self.data_original
+        self.data_original, self.sampling_rate = librosa.load(file_path, sr=44100)
+        self.data_signal = self.data_original
         print(f"sampling_rate:{self.sampling_rate}")
         end_time = librosa.get_duration(y=self.data_original, sr=self.sampling_rate)
         print(f"end_time:{end_time}")
         if self.modified_signal:
             print(f"fileeeeeeeee:{file_path}")
             QCoreApplication.processEvents()
-            self.scene2= QtWidgets.QGraphicsScene()
+            self.scene2 = QtWidgets.QGraphicsScene()
             canvas = FigureCanvasQTAgg(self.fig_modified)
             self.graphicsView_modified.setScene(self.scene2)
             self.scene2.addWidget(canvas)
             if self.check_ended_animation_1:
                 self.specific_row = 0
                 print(f"check:{self.check_ended_animation_1}")
-                self.data_original = data_signal
-                self.Plot(data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
-
-
+                self.data_original = self.data_signal
+                self.Plot(self.data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
         else:
-            self.data_original = data_signal
-
-            self.Plot(data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
+            self.data_original = self.data_signal
+            self.Plot(self.data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
 
     def check_spectro_state_changed(self, state):
         if state == 2:  # 2 corresponds to checked state
@@ -292,7 +289,7 @@ class MainApp(QMainWindow, MainUI):
             self.ani_1 = FuncAnimation(self.fig_original, self.animate_fig_original, interval=self.Delay_interval,
                                        frames=no_of_frames, repeat=False, fargs=(length_data, data), blit=False)
             QCoreApplication.processEvents()
-            self.specific_row= 0
+            self.specific_row = 0
             self.y_fig_original = []
             self.x_fig_original = []
 
@@ -312,19 +309,11 @@ class MainApp(QMainWindow, MainUI):
             self.ani_2 = FuncAnimation(self.fig_modified, self.animate_fig_modified, interval=self.Delay_interval,
                                        frames=no_of_frames, repeat=False, fargs=(len(self.modified_signal_after_inverse), self.modified_signal_after_inverse), blit=False)
             print("lkkkk")
-
-            print("lkkkk")
             QCoreApplication.processEvents()
 
-
-        # print(i)
-
         self.specific_row += self.no_of_points
-
-
         if self.specific_row <= length_data - 1:
-            self.check_ended_animation_1=False
-
+            self.check_ended_animation_1 = False
             # print(f"no of points{self.no_of_points,self.specific_row}")
             # print(f"data:{data[self.specific_row]}")
             # print(f".specific_row:{self.specific_row}")
@@ -356,7 +345,6 @@ class MainApp(QMainWindow, MainUI):
             time_sliced = time_array[:self.specific_row]
             self.y_fig_modified, self.x_fig_modified = data_sliced.tolist(), time_sliced.tolist()
             # self.ax_modified.clear()
-            #
             # self.ax_modified.plot(self.x_fig_modified, self.y_fig_modified)
             self.line2.set_data(self.x_fig_modified, self.y_fig_modified)
 
@@ -370,27 +358,18 @@ class MainApp(QMainWindow, MainUI):
     def Plot(self, data, sampling_rate, end_time, axes, animation_func):
         no_of_frames = int(np.floor(len(data)) / 1000)
         print(f"lenght:{len(data)}")
-
         # print(Delay_interval)
         self.time = np.linspace(0, end_time, len(data))
-
         axes.set_ylim(min(data), max(data))
-
-
         QCoreApplication.processEvents()
         if len(self.modified_signal_after_inverse) > 1:
             print("hallllo")
-
             QCoreApplication.processEvents()
-
             self.scene2= QtWidgets.QGraphicsScene()
             canvas = FigureCanvasQTAgg(self.fig_modified)
             self.graphicsView_modified.setScene(self.scene2)
             self.scene2.addWidget(canvas)
-
-
         else:
-
             QCoreApplication.processEvents()
             self.line1, = self.ax_original.plot([], [], color='b')
             self.Plot_frequency_spectrum(data)
@@ -405,7 +384,20 @@ class MainApp(QMainWindow, MainUI):
 
     def band_width(self, name):
         band_width = []
-        if name == "elephant":
+        if name == "owl":
+            band_width_bin = np.array([650, 950, -650, -950])
+            amp = int(self.animal_slider1.value())
+        if name == "frog":
+            band_width_bin = np.array([950,1900, -950, -1900])
+            amp = int(self.animal_slider2.value())
+        if name == "grasshoppers":
+            band_width_bin = np.array([6000, 30000, -6000, -30000])
+            amp = int(self.animal_slider3.value())
+        if name == "canary":
+            band_width_bin = np.array([3000, 5500, -3000, -5500])
+            amp = int(self.animal_slider4.value())
+
+        
             # Animals mode
             # band_width_bin = np.array([650, 950, -650, -950])  # owl
             # band_width_bin = np.array([950,1900, -950, -1900]) # frog
@@ -415,9 +407,9 @@ class MainApp(QMainWindow, MainUI):
             # band_width_bin = np.array([0, 800, 0, -800]) # xylphone
 
             # band_width_bin = np.array([0, 1000, 0, -800])  # guitar
-            band_width_bin = np.array([500, 2700,-500, -2700])  # flute
             # band_width_bin = np.array([500, 2700,-500, -2700])  # flute
-            amp = int(self.animal_slider1.value())
+            # band_width_bin = np.array([500, 2700,-500, -2700])  # flute
+            # amp = int(self.animal_slider1.value())
 
             print(f"amp:{amp}")
 
@@ -454,20 +446,13 @@ class MainApp(QMainWindow, MainUI):
             amp = int(self.uni_slider10.value())
 
         print(f"length of data :{len(self.data_original)}")
-
         # band_width_bin = (band_width_hz * 124416) / self.sampling_rate
-
-
         # band_width_bin = (band_width_hz * 903723) / self.sampling_rate
         # band_width_bin = (band_width_hz * 617472) / self.sampling_rate
         # band_width_bin = (band_width_hz * 330750) / self.sampling_rate
         print(f"band:{band_width_bin}")
         print(f"index:{name}")
-
         self.Modify_frequency(band_width_bin, amp)
-
-
-
 
     def Modify_frequency(self, band_width, modified_amp):
         print(f"amp:{modified_amp}")
@@ -495,12 +480,51 @@ class MainApp(QMainWindow, MainUI):
         self.modified_signal_after_inverse = np.array(self.modified_signal_after_inverse.real)
         # self.modified_signal_after_inverse = np.array(np.abs(self.modified_signal_after_inverse))
         self.Write_modified_signal(self.modified_signal_after_inverse)
+    
+    def arrhythima(self):
+        ecg = electrocardiogram()
+        fs = 360
+        time = np.arange(ecg.size) / fs
+        # rfrequency, amplitude, modified_signal_list = self.Fourier_Transform(ecg, fs)
+        fft_file = sc.fft.rfft(ecg)
+        amplitude = np.abs(fft_file)
+        phase = np.angle(fft_file)
+        rfrequency = sc.fft.rfftfreq(len(ecg), 1/fs)
+        value = 0
+        band_index_pos = np.where((rfrequency >= 1) & (rfrequency < 5))
+        for i in band_index_pos:
+           amplitude[i] = value * amplitude[i]
+        # phase = np.angle(modified_signal_list)
+        modified_signal_list = np.multiply(amplitude, np.exp(1j*phase))
+        modified_signal_after_inverse = ifft(modified_signal_list)
+        df = pd.DataFrame({'time': time, 'amplitude': ecg,
+                        'modified_amplitude': modified_signal_after_inverse})
+        rows_until_45sec = df.loc[df['time'] <= float(45)]
+        rows_until_51sec = df.loc[df['time'] <= float(51)]
+        df = df.loc[len(rows_until_45sec):len(rows_until_51sec)]
+        self.arr_scene = QtWidgets.QGraphicsScene()
+        canvas_1 = FigureCanvasQTAgg(self.fig_original)
+        QCoreApplication.processEvents()
+        self.graphicsView_original.setScene(self.arr_scene)
+        self.arr_scene.addWidget(canvas_1)
+        self.ax_original.set_xlim(45, 51)
+        self.ax_original.set_ylim(-2, 3.5)
+        self.ax_original.plot(time, ecg, color='g')
 
-    def Fourier_Transform(self, data):
+        self.arr_scene_modified = QtWidgets.QGraphicsScene()
+        canvas_2 = FigureCanvasQTAgg(self.fig_modified)
+        QCoreApplication.processEvents()
+        self.graphicsView_modified.setScene(self.arr_scene_modified)
+        self.arr_scene_modified.addWidget(canvas_2)
+        self.ax_modified.set_xlim(45, 51)
+        self.ax_modified.set_ylim(-2, 3.5)
+        self.ax_modified.plot(time, modified_signal_after_inverse, color='r')
+
+        
+    def Fourier_Transform(self, data, sr = 44100):
         signal = fft(data)
-        frequencies_bin = fftfreq(len(signal), 1/self.sampling_rate)
+        frequencies_bin = fftfreq(len(signal), 1/sr)
         amplitudies = np.abs(signal)
-
         return frequencies_bin, amplitudies, signal
 
     def Plot_frequency_spectrum(self, signal):
@@ -508,7 +532,6 @@ class MainApp(QMainWindow, MainUI):
         # frequencies_hz = (frequencies_bin * self.sampling_rate) / 124416
         # frequencies_hz = (frequencies_bin * self.sampling_rate) / 903723
         self.scene3 = QtWidgets.QGraphicsScene()
-
         canvas3 = FigureCanvasQTAgg(self.fig_frequecies)
         self.graphicsView_windowing.setScene(self.scene3)
         self.scene3.addWidget(canvas3)
@@ -527,6 +550,8 @@ class MainApp(QMainWindow, MainUI):
                 music_slider.hide()
             for animal_slider in self.animal_sliders_list:
                 animal_slider.hide()
+            for animal_label in self.animal_labels_list:
+                animal_label.hide()
             self.ecg_slider.hide()
 
         if self.mode_index == 1:
@@ -538,11 +563,15 @@ class MainApp(QMainWindow, MainUI):
                 uni_label.hide()
             for animal_slider in self.animal_sliders_list:
                 animal_slider.hide()
+            for animal_label in self.animal_labels_list:
+                animal_label.hide()
             self.ecg_slider.hide()
 
         if self.mode_index == 2:
             for slider in self.animal_sliders_list:
                 slider.show()
+            for animal_label in self.animal_labels_list:
+                animal_label.show()
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.hide()
             for uni_label in self.uni_labels_list:
@@ -561,13 +590,14 @@ class MainApp(QMainWindow, MainUI):
                 music_slider.hide()
             for animal_slider in self.animal_sliders_list:
                 animal_slider.hide()
+            for animal_label in self.animal_labels_list:
+                animal_label.hide()
 
     def Zoom_out(self):
         y_min, y_max = self.ax_original.get_ylim()
         y_min -= 0.05
         y_max += 0.05
-        self.draw(y_min,y_max)
-
+        self.draw(y_min, y_max)
 
     def Zoom_in(self):
         y_min, y_max = self.ax_original.get_ylim()
@@ -575,8 +605,7 @@ class MainApp(QMainWindow, MainUI):
         y_max -= 0.05
         self.draw(y_min, y_max)
 
-
-    def draw(self,y_min,y_max):
+    def draw(self, y_min, y_max):
         self.ax_original.set_ylim(y_min, y_max)
         self.ax_modified.set_ylim(y_min, y_max)
         # canvas refers to the area where the figure and its subplots are drawn
@@ -613,7 +642,6 @@ class MainApp(QMainWindow, MainUI):
             # left-mouse button press: activate pan
             self.oldxy = [event.xdata, event.ydata]
             self.panningflag = 1
-
         elif (event.name == 'button_release_event') and (event.button.numerator == 1):
             # left-mouse button release: deactivate pan
             self.panningflag = 0
@@ -625,7 +653,6 @@ class MainApp(QMainWindow, MainUI):
             self.pan_ch1 = True
             # do pan
             self.ax_original = event.inaxes  # set the axis to work on
-
             x, y = event.xdata, event.ydata
             print(self.oldxy[0], self.oldxy[1])
             print(f"x,y:{x, y}")
@@ -650,13 +677,9 @@ class MainApp(QMainWindow, MainUI):
             msg.setInformativeText("Please Upload A Signal")
             msg.show()
             msg.exec_()
-
         else:
-
             self.pause = True
             self.no_of_points += 1000
-
-
 
     def decrease_speed(self):  # decrease speed
         if self.Delay_interval is None:
@@ -666,8 +689,6 @@ class MainApp(QMainWindow, MainUI):
             msg.show()
             msg.exec_()
         else:
-
-
             self.no_of_points -= 1000
             if self.no_of_points == 0:
                 self.no_of_points = 1000
@@ -675,11 +696,6 @@ class MainApp(QMainWindow, MainUI):
 
     def reset(self):
         pass
-
-
-
-
-
 
 def main():
     app = QApplication(sys.argv)
