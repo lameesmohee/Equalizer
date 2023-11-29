@@ -70,6 +70,7 @@ class MainApp(QMainWindow, MainUI):
 
         self.Delay_interval = 200
         self.pause = False
+        self.check_ended_animation_1 =False
         self.modified_signal = False
         self.modified_signal_after_inverse = []
         self.line = None
@@ -228,36 +229,43 @@ class MainApp(QMainWindow, MainUI):
         # Continue with the rest of your code
         self.modified_signal = True
         self.media_player_modified_signal.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
+        QCoreApplication.processEvents()
         self.media_player_modified_signal.play()
+        QCoreApplication.processEvents()
         self.play_pause_audio_button_2.setText('❚❚')
+        QCoreApplication.processEvents()
         self.play_pause_audio_button.setText('►')
+        QCoreApplication.processEvents()
         self.media_player.pause()
+        QCoreApplication.processEvents()
 
         self.Read_signal(file_path)
 
     def Read_signal(self, file_path):
 
-        self.data_original, self.sampling_rate = librosa.load(file_path)
+        self.data_original, self.sampling_rate = librosa.load(file_path,sr=44100)
         data_signal = self.data_original
+        print(f"sampling_rate:{self.sampling_rate}")
         end_time = librosa.get_duration(y=self.data_original, sr=self.sampling_rate)
         print(f"end_time:{end_time}")
         if self.modified_signal:
             print(f"fileeeeeeeee:{file_path}")
-
             QCoreApplication.processEvents()
-
             self.scene2= QtWidgets.QGraphicsScene()
             canvas = FigureCanvasQTAgg(self.fig_modified)
             self.graphicsView_modified.setScene(self.scene2)
             self.scene2.addWidget(canvas)
+            if self.check_ended_animation_1:
+                self.specific_row = 0
+                print(f"check:{self.check_ended_animation_1}")
+                self.data_original = data_signal
+                self.Plot(data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
 
 
-            # self.Plot(data_signal, self.sampling_rate, end_time, self.ax_modified,self.animate_fig_modified)
         else:
             self.data_original = data_signal
 
-            self.Plot(data_signal, self.sampling_rate, end_time, self.ax_original,self.animate_fig_original)
-
+            self.Plot(data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
 
     def check_spectro_state_changed(self, state):
         if state == 2:  # 2 corresponds to checked state
@@ -277,14 +285,13 @@ class MainApp(QMainWindow, MainUI):
 
     def animate_fig_original(self, i, length_data, data):
         if self.modified_signal:
-
             self.ani_1.event_source.stop()
             print("animation is stopped")
             no_of_frames = int(np.floor(length_data) / 1000)
             self.modified_signal = False
             self.ani_1 = FuncAnimation(self.fig_original, self.animate_fig_original, interval=self.Delay_interval,
                                        frames=no_of_frames, repeat=False, fargs=(length_data, data), blit=False)
-
+            QCoreApplication.processEvents()
             self.specific_row= 0
             self.y_fig_original = []
             self.x_fig_original = []
@@ -295,45 +302,54 @@ class MainApp(QMainWindow, MainUI):
                 self.x_fig_modified = []
 
             self.ax_frequecies.clear()
+            print("lllll")
             self.line2, = self.ax_modified.plot([], [], color='r')
-            self.ax_modified.set_ylim(min(self.modified_signal_after_inverse), max(self.modified_signal_after_inverse))
+            QCoreApplication.processEvents()
             self.Plot_frequency_spectrum(self.modified_signal_after_inverse)
+            self.ax_modified.set_ylim(min(self.modified_signal_after_inverse), max(self.modified_signal_after_inverse))
+            QCoreApplication.processEvents()
+            print("bbbbb")
             self.ani_2 = FuncAnimation(self.fig_modified, self.animate_fig_modified, interval=self.Delay_interval,
-                                       frames=no_of_frames, repeat=False, fargs=(
-                len(self.modified_signal_after_inverse), self.modified_signal_after_inverse), blit=False)
+                                       frames=no_of_frames, repeat=False, fargs=(len(self.modified_signal_after_inverse), self.modified_signal_after_inverse), blit=False)
+            print("lkkkk")
 
-        print(i)
+            print("lkkkk")
+            QCoreApplication.processEvents()
+
+
+        # print(i)
 
         self.specific_row += self.no_of_points
 
-        if self.specific_row <= length_data - 1:
 
-            print(f"no of points{self.no_of_points,self.specific_row}")
+        if self.specific_row <= length_data - 1:
+            self.check_ended_animation_1=False
+
+            # print(f"no of points{self.no_of_points,self.specific_row}")
             # print(f"data:{data[self.specific_row]}")
             # print(f".specific_row:{self.specific_row}")
             data_array = np.array(data)
             time_array = np.array(self.time)
-
             # Slice the arrays
             data_sliced = data_array[:self.specific_row]
             time_sliced = time_array[:self.specific_row]
             self.y_fig_original, self.x_fig_original = data_sliced.tolist(), time_sliced.tolist()
-
             self.line1.set_data(self.x_fig_original, self.y_fig_original)
-
             if self.specific_row > 1000:
-                self.ax_original.set_xlim(self.time[self.specific_row - 500], self.time[self.specific_row])
+                self.ax_original.set_xlim(self.time[self.specific_row - 1000], self.time[self.specific_row])
+        else:
+            self.check_ended_animation_1 = True
 
         return self.line1,
 
     def animate_fig_modified(self, i, length_data, data):
-        # print(f"leng:{length_data}")
-        # self.modified_signal = False
+        print("Hate ")
         if self.specific_row <= length_data - 1:
             # print(f"data:{data[self.specific_row]}")
             # print(f".specific_row_2:{self.specific_row}")
             data_array = np.array(data)
             time_array = np.array(self.time)
+            print("animation 2 is started")
 
             # Slice the arrays
             data_sliced = data_array[:self.specific_row]
@@ -347,7 +363,7 @@ class MainApp(QMainWindow, MainUI):
             # print(f"runtime:{(end - self.start) * 1000}")
             if self.specific_row > 1000:
                 # self.index += 1200
-                self.ax_modified.set_xlim(self.time[self.specific_row - 500], self.time[self.specific_row])
+                self.ax_modified.set_xlim(self.time[self.specific_row - 1000], self.time[self.specific_row])
 
         return self.line2,
 
@@ -390,49 +406,65 @@ class MainApp(QMainWindow, MainUI):
     def band_width(self, name):
         band_width = []
         if name == "elephant":
-            band_width = [250, 2000, -250, -2000]  ## dog
-            # band_width = [800, 4000,-800,-4000] ## horse
-            # band_width = [400, 6000,-400, -6000] ##elephant
-            # band_width = [50,4000,50, -4000]  ##Guitar
-            # band_width = [0, 3000, 0, -3000]  ##piano
+            # Animals mode
+            # band_width_bin = np.array([650, 950, -650, -950])  # owl
+            # band_width_bin = np.array([950,1900, -950, -1900]) # frog
+            # band_width_bin = np.array([6000, 30000, -6000, -30000])  # grasshoppers
+            # band_width_bin = np.array([3000, 5500, -3000, -5500])  # canary
+            # band_width_bin = np.array([0, 1200, 0, -1200])  # xylphone
+            # band_width_bin = np.array([0, 800, 0, -800]) # xylphone
+
+            # band_width_bin = np.array([0, 1000, 0, -800])  # guitar
+            band_width_bin = np.array([500, 2700,-500, -2700])  # flute
+            # band_width_bin = np.array([500, 2700,-500, -2700])  # flute
             amp = int(self.animal_slider1.value())
+
             print(f"amp:{amp}")
 
         if name == "1":
-            band_width = [0, 500, 0, -500]
+            band_width_hz = [0, 500, 0, -500]
             amp = int(self.uni_slider1.value())
 
         if name == "2":
-            band_width = [500, 1000, -500, -1000]
+            band_width_hz = [500, 1000, -500, -1000]
             amp = int(self.uni_slider2.value())
         if name == "3":
-            band_width = [1000, 1500, -1000, -1500]
+            band_width_hz = [1000, 1500, -1000, -1500]
             amp = int(self.uni_slider3.value())
         if name == "4":
-            band_width = [1500, 2000, -1500, -2000]
+            band_width_hz = [1500, 2000, -1500, -2000]
             amp = int(self.uni_slider4.value())
         if name == "5":
-            band_width = [2000, 2500, -2000, -2500]
+            band_width_hz = [2000, 2500, -2000, -2500]
             amp = int(self.uni_slider5.value())
         if name == "6":
-            band_width = [2000, 2500, -2000, -2500]
+            band_width_hz = [2000, 2500, -2000, -2500]
             amp = int(self.uni_slider6.value())
         if name == "7":
-            band_width = [3000, 3500, -3000, -3500]
+            band_width_hz = [3000, 3500, -3000, -3500]
             amp = int(self.uni_slider7.value())
         if name == "8":
-            band_width = [3500, 4000, -3500, -4000]
+            bband_width_hz = [3500, 4000, -3500, -4000]
             amp = int(self.uni_slider8.value())
         if name == "9":
-            band_width = [4000, 4500, -4000, -4500]
+            band_width_hz = [4000, 4500, -4000, -4500]
             amp = int(self.uni_slider9.value())
         if name == "10":
-            band_width = [4500, 5000, -4500, -5000]
+            band_width_hz = [4500, 5000, -4500, -5000]
             amp = int(self.uni_slider10.value())
 
-        print(f"band:{band_width}")
+        print(f"length of data :{len(self.data_original)}")
+
+        # band_width_bin = (band_width_hz * 124416) / self.sampling_rate
+
+
+        # band_width_bin = (band_width_hz * 903723) / self.sampling_rate
+        # band_width_bin = (band_width_hz * 617472) / self.sampling_rate
+        # band_width_bin = (band_width_hz * 330750) / self.sampling_rate
+        print(f"band:{band_width_bin}")
         print(f"index:{name}")
-        self.Modify_frequency(band_width, amp)
+
+        self.Modify_frequency(band_width_bin, amp)
 
 
 
@@ -466,20 +498,23 @@ class MainApp(QMainWindow, MainUI):
 
     def Fourier_Transform(self, data):
         signal = fft(data)
-        frequencies = fftfreq(len(signal), 1/self.sampling_rate)
-        amplitudies = np.abs(signal)/len(signal)
-        return frequencies, amplitudies, signal
+        frequencies_bin = fftfreq(len(signal), 1/self.sampling_rate)
+        amplitudies = np.abs(signal)
+
+        return frequencies_bin, amplitudies, signal
 
     def Plot_frequency_spectrum(self, signal):
-        frequencies, amplitudes, signal = self.Fourier_Transform(signal)
+        frequencies_bin, amplitudes, signal = self.Fourier_Transform(signal)
+        # frequencies_hz = (frequencies_bin * self.sampling_rate) / 124416
+        # frequencies_hz = (frequencies_bin * self.sampling_rate) / 903723
         self.scene3 = QtWidgets.QGraphicsScene()
 
         canvas3 = FigureCanvasQTAgg(self.fig_frequecies)
         self.graphicsView_windowing.setScene(self.scene3)
         self.scene3.addWidget(canvas3)
-        self.ax_frequecies.set_xlim(0,max(frequencies))
-
-        self.ax_frequecies.plot(frequencies, amplitudes, color='b')
+        # self.ax_frequecies.set_xlim(max(frequencies))
+        self.ax_frequecies.plot(frequencies_bin, amplitudes, color='g')
+        return
 
     def show_sliders(self):
         self.mode_index = self.mode_options.currentIndex()
@@ -600,7 +635,7 @@ class MainApp(QMainWindow, MainUI):
             if x_min >= self.time[3] and x_max <= self.time[self.specific_row]:
                 self.ax_original.set_xlim(self.ax_original.get_xlim() + self.oldxy[0] - x)
                 self.ax_modified.set_xlim(self.ax_original.get_xlim() + self.oldxy[0] - x)  # set new axes limits
-            if y_min >= -1 and  y_max <= 1:
+            if y_min >= -1 and y_max <= 1:
                 self.ax_original.set_ylim(self.ax_original.get_ylim() + self.oldxy[1] - y)
                 # set new axes limits
                 self.ax_modified.set_ylim(self.ax_original.get_ylim() + self.oldxy[1] - y)
