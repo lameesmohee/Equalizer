@@ -30,6 +30,9 @@ from scipy import signal
 from scipy.misc import electrocardiogram
 import pandas as pd
 import scipy as sc
+from scipy.io import wavfile
+from datetime import datetime
+from scipy.fft import fftshift
 
 
 MainUI, _ = loadUiType(path.join(path.dirname(__file__), 'equalizer.ui'))
@@ -77,6 +80,7 @@ class MainApp(QMainWindow, MainUI):
         self.line = None
         self.ani_2 = None
         self.ani_1 = None
+        # self.ani_11 = None
         self.specific_row = 0
         self.specific_row_2 = 0
         self.index = 0
@@ -84,6 +88,7 @@ class MainApp(QMainWindow, MainUI):
         self.sampling_rate = 0
         self.n_samples = 0
         self.type_data = 0
+        self.Counter_file = 0
         self.ecg_slider.hide()
         self.show_sliders()
         self.no_of_points = 1000
@@ -154,6 +159,7 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.uni_slider10.valueChanged.connect(lambda: self.band_width('10'))
         QCoreApplication.processEvents()
+        self.comboBox_windowing.currentTextChanged.connect(self.check_type_window)
 
     def styles(self):
         zoom_in_icon = icon("ei.zoom-in", color='black')
@@ -174,20 +180,16 @@ class MainApp(QMainWindow, MainUI):
         if button_name == self.play_pause_audio_button:
             if self.play_pause_audio_button.text() == "►":
                 self.play_pause_audio_button.setText('❚❚')
-                # self.ani_1.event_source.start()
                 self.media_player.play()
             else:
                 self.play_pause_audio_button.setText('►')
-                # self.ani_1.event_source.stop()
                 self.media_player.pause()
         else:
             if self.play_pause_audio_button_2.text() == "►":
                 self.play_pause_audio_button_2.setText('❚❚')
-                # self.ani_2.event_source.start()
                 self.media_player_modified_signal.play()
             else:
                 self.play_pause_audio_button_2.setText('►')
-                # self.ani_2.event_source.stop()
                 self.media_player_modified_signal.pause()
 
     def set_audio_position(self, media_name, audio_progress):
@@ -212,17 +214,23 @@ class MainApp(QMainWindow, MainUI):
     def Write_modified_signal(self, modified_signal):
         directory_path, file_name = os.path.split(self.file_path)
         file_name_without_extension, file_extension = os.path.splitext(file_name)
-        # Create a modified file name by appending "modified.wav"
-        modified_file_name = file_name_without_extension + "modified.wav"
+        # Create the full file path for the modified file
+
+        self.Counter_file +=1
+        modified_file_name = f"{file_name_without_extension}_modified_{self.Counter_file}.wav"
 
         # Create the full file path for the modified file
         file_path = os.path.join(directory_path, modified_file_name)
 
         # Write the modified signal to the new file
         try:
+            # wavfile.write(file_path,self.sampling_rate,modified_signal.astype("int16"))
+            # print("The Data is stored")
             with sf.SoundFile(file_path, 'w', format='wav', samplerate=self.sampling_rate, channels=1) as file:
                 # Write the modified signal to the file
                 file.write(modified_signal)
+                print("The Data is stored")
+
         # Code that may cause the issue
 
         except Exception as e:
@@ -248,18 +256,18 @@ class MainApp(QMainWindow, MainUI):
         print(f"sampling_rate:{self.sampling_rate}")
         end_time = librosa.get_duration(y=self.data_original, sr=self.sampling_rate)
         print(f"end_time:{end_time}")
-        if self.modified_signal:
+        if  len(self.modified_signal_after_inverse) > 1:
             print(f"fileeeeeeeee:{file_path}")
             QCoreApplication.processEvents()
             self.scene2 = QtWidgets.QGraphicsScene()
             canvas = FigureCanvasQTAgg(self.fig_modified)
             self.graphicsView_modified.setScene(self.scene2)
             self.scene2.addWidget(canvas)
-            if self.check_ended_animation_1:
-                self.specific_row = 0
-                print(f"check:{self.check_ended_animation_1}")
-                self.data_original = self.data_signal
-                self.Plot(self.data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
+            # if self.check_ended_animation_1:
+            #     self.specific_row = 0
+            #     print(f"check:{self.check_ended_animation_1}")
+            #     self.data_original = self.data_signal
+            #     self.Plot(self.data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
         else:
             self.data_original = self.data_signal
             self.Plot(self.data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
@@ -281,22 +289,29 @@ class MainApp(QMainWindow, MainUI):
         scene.addWidget(canvas_3)
 
     def animate_fig_original(self, i, length_data, data):
+        print(f"i:{i}")
         if self.modified_signal:
+            print("lamaaa")
             self.ani_1.event_source.stop()
-            print("animation is stopped")
+            # self.ani_11.event_source.stop()
+            # print("animation is stopped")
             no_of_frames = int(np.floor(length_data) / 1000)
             self.modified_signal = False
-            self.ani_1 = FuncAnimation(self.fig_original, self.animate_fig_original, interval=self.Delay_interval,
-                                       frames=no_of_frames, repeat=False, fargs=(length_data, data), blit=False)
+            if i > 0: # we can not stop animation if it does not start 
+                self.ani_1 = FuncAnimation(self.fig_original, self.animate_fig_original, interval=self.Delay_interval,
+                                           frames=no_of_frames, repeat=False, fargs=(length_data, data), blit=False)
+
             QCoreApplication.processEvents()
             self.specific_row = 0
             self.y_fig_original = []
             self.x_fig_original = []
+            self.y_fig_modified = []
+            self.x_fig_modified = []
 
             print(f"x_fig_length:{len(self.x_fig_modified)}")
-            if len(self.x_fig_modified) > 1:
-                self.y_fig_modified = []
-                self.x_fig_modified = []
+            # if len(self.x_fig_modified) > 1:
+            #     self.y_fig_modified = []
+            #     self.x_fig_modified = []
 
             self.ax_frequecies.clear()
             print("lllll")
@@ -338,7 +353,7 @@ class MainApp(QMainWindow, MainUI):
             # print(f".specific_row_2:{self.specific_row}")
             data_array = np.array(data)
             time_array = np.array(self.time)
-            print("animation 2 is started")
+            # print("animation 2 is started")
 
             # Slice the arrays
             data_sliced = data_array[:self.specific_row]
@@ -360,7 +375,6 @@ class MainApp(QMainWindow, MainUI):
         print(f"lenght:{len(data)}")
         # print(Delay_interval)
         self.time = np.linspace(0, end_time, len(data))
-        axes.set_ylim(min(data), max(data))
         QCoreApplication.processEvents()
         if len(self.modified_signal_after_inverse) > 1:
             print("hallllo")
@@ -370,6 +384,7 @@ class MainApp(QMainWindow, MainUI):
             self.graphicsView_modified.setScene(self.scene2)
             self.scene2.addWidget(canvas)
         else:
+            axes.set_ylim(min(data), max(data))
             QCoreApplication.processEvents()
             self.line1, = self.ax_original.plot([], [], color='b')
             self.Plot_frequency_spectrum(data)
@@ -485,23 +500,29 @@ class MainApp(QMainWindow, MainUI):
         ecg = electrocardiogram()
         fs = 360
         time = np.arange(ecg.size) / fs
-        # rfrequency, amplitude, modified_signal_list = self.Fourier_Transform(ecg, fs)
-        fft_file = sc.fft.rfft(ecg)
-        amplitude = np.abs(fft_file)
-        phase = np.angle(fft_file)
-        rfrequency = sc.fft.rfftfreq(len(ecg), 1/fs)
+        # time = np.linespace(0,)
+        rfrequency, amplitude, modified_signal_list = self.Fourier_Transform(ecg, fs)
+        # self.Plot_frequency_spectrum(ecg, 360)
+        # fft_file = sc.fft.rfft(ecg)
+        # amplitude = np.abs(fft_file)
+        phase = np.angle(modified_signal_list)
+        # rfrequency = sc.fft.rfftfreq(len(ecg), 1/fs)
         value = 0
         band_index_pos = np.where((rfrequency >= 1) & (rfrequency < 5))
+        band_index_neg = np.where((rfrequency >= -5) & (rfrequency < -1))
         for i in band_index_pos:
            amplitude[i] = value * amplitude[i]
+        for i in band_index_neg:
+            amplitude[i] = value * amplitude[i]
         # phase = np.angle(modified_signal_list)
         modified_signal_list = np.multiply(amplitude, np.exp(1j*phase))
         modified_signal_after_inverse = ifft(modified_signal_list)
-        df = pd.DataFrame({'time': time, 'amplitude': ecg,
-                        'modified_amplitude': modified_signal_after_inverse})
-        rows_until_45sec = df.loc[df['time'] <= float(45)]
-        rows_until_51sec = df.loc[df['time'] <= float(51)]
-        df = df.loc[len(rows_until_45sec):len(rows_until_51sec)]
+        # df = pd.DataFrame({'time': time, 'amplitude': ecg,
+        #                 'modified_amplitude': modified_signal_after_inverse})
+        # rows_until_45sec = df.loc[df['time'] <= float(45)]
+        # rows_until_51sec = df.loc[df['time'] <= float(51)]
+        # df = df.loc[len(rows_until_45sec):len(rows_until_51sec)]
+        self.Plot_frequency_spectrum(modified_signal_after_inverse,360)
         self.arr_scene = QtWidgets.QGraphicsScene()
         canvas_1 = FigureCanvasQTAgg(self.fig_original)
         QCoreApplication.processEvents()
@@ -523,20 +544,33 @@ class MainApp(QMainWindow, MainUI):
         
     def Fourier_Transform(self, data, sr = 44100):
         signal = fft(data)
+        print(f"fs:{sr}")
         frequencies_bin = fftfreq(len(signal), 1/sr)
         amplitudies = np.abs(signal)
         return frequencies_bin, amplitudies, signal
 
-    def Plot_frequency_spectrum(self, signal):
-        frequencies_bin, amplitudes, signal = self.Fourier_Transform(signal)
+    def plot_windowing(self,window_data,amplitudes_in_db):
+        print("arrived")
+        print(f'amplitudes:{amplitudes_in_db}')
+        self.ax_frequecies.plot(amplitudes_in_db, color='r')
+        return
+
+    def Plot_frequency_spectrum(self, signal,sr=44100):
+        frequencies_bin, amplitudes, signal = self.Fourier_Transform(signal,sr)
+        # dbs= 20 * np.log10((np.abs(amplitudes))**2)
+        # dbs = librosa.amplitude_to_db(amplitudes)
+        dbs = amplitudes
         # frequencies_hz = (frequencies_bin * self.sampling_rate) / 124416
         # frequencies_hz = (frequencies_bin * self.sampling_rate) / 903723
         self.scene3 = QtWidgets.QGraphicsScene()
         canvas3 = FigureCanvasQTAgg(self.fig_frequecies)
         self.graphicsView_windowing.setScene(self.scene3)
         self.scene3.addWidget(canvas3)
-        # self.ax_frequecies.set_xlim(max(frequencies))
-        self.ax_frequecies.plot(frequencies_bin, amplitudes, color='g')
+        if len(self.modified_signal_after_inverse) < 1:
+            print("HALLO")
+            self.y_min, self.y_max = min(dbs),max(dbs)
+        self.ax_frequecies.set_ylim(self.y_min, self.y_max)
+        self.ax_frequecies.plot(frequencies_bin, dbs, color='g')
         return
 
     def show_sliders(self):
@@ -614,20 +648,23 @@ class MainApp(QMainWindow, MainUI):
 
     def toggle_channel_animation(self):  # to play /stop animation
         if self.graph_btn_play.text() == "►":
+            self.play_animation = True
+
+            print(f"animation is played")
             self.graph_btn_play.setText("❚❚")
             self.ani_1.event_source.start()
-            if len(self.x_fig_modified) > 1:
+            if len(self.modified_signal_after_inverse) > 1:
                 self.ani_2.event_source.start()
-
             shortcut1 = QShortcut(QKeySequence('Ctrl+P'), self)
             shortcut1.activated.connect(self.graph_btn_play.click)
         else:
+            self.play_animation = False
             self.graph_btn_play.setText("►")
-
             self.ani_1.event_source.stop()
-            if len(self.x_fig_modified) > 1:
+            print(f"animation is paused")
+            if len(self.modified_signal_after_inverse) > 1:
+                self.ani_1.event_source.stop()
                 self.ani_2.event_source.stop()
-
             shortcut1 = QShortcut(QKeySequence('Ctrl+P'), self)
             shortcut1.activated.connect(self.graph_btn_play.click)
 
@@ -696,6 +733,61 @@ class MainApp(QMainWindow, MainUI):
 
     def reset(self):
         pass
+
+    def check_type_window(self):
+        window_name = self.comboBox_windowing.currentText()
+        self.windowing(window_name, window_size=60)
+
+
+    def get_information_data(self):
+        if len(self.modified_signal_after_inverse) > 1:
+            return len(self.modified_signal_after_inverse), self.modified_signal_after_inverse
+        else:
+            return len(self.data_original), self.data_original
+
+    def windowing(self,window_name,window_size,sigma=0.1):
+        self.Windowing =True
+        padding_size, data = self.get_information_data()
+        if window_name == "Hamming":
+            window = np.hamming(window_size)
+        if window_name == "Hanning":
+            window = np.hanning(window_size)
+        if window_name == "Rectagular":
+            window = np.ones(window_size)
+        if window_name == "Gaussian":
+            window =signal.windows.gaussian(window_size, std=sigma)
+
+        print("arrived1")
+
+        window_after_padding = np.concatenate([window, np.zeros(padding_size - window_size)])
+
+        frequencies, amplitudes, window_transform = self.Fourier_Transform(window_after_padding,1)
+        amplitudes = np.abs(fftshift(window_transform / abs(window_transform ).max())) #fftshift => Shift the zero-frequency component to the center of the spectrum
+        self.plot_windowing(window_after_padding,amplitudes)
+        print("arrived2")
+        data_length,data = self.get_information_data()
+        frequencies, amplitudes, data = self.Fourier_Transform(data)
+        print("arrived5")
+        data_after_windowing = self.convolution(window_transform, data)
+        self.data_original = data_after_windowing
+
+
+    def convolution(self, window_transform, modified_data):
+        print("arrived6")
+        # print(window_transform)
+        # print(modified_data)
+        try:
+            window_result = np.convolve(window_transform, modified_data, mode='full')
+            print(window_result)
+            print("arrived3")
+            print(window_result)
+            data_after_windowing = ifft(window_result)
+        except Exception as e:
+            print("An error occurred:", e)
+            data_after_windowing = None
+
+        print("arrived4")
+        # return data_after_windowing
 
 def main():
     app = QApplication(sys.argv)

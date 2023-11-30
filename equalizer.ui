@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1832</width>
+    <width>1838</width>
     <height>948</height>
    </rect>
   </property>
@@ -124,7 +124,7 @@
           <string>Smoothing Window</string>
          </property>
         </widget>
-        <widget class="QComboBox" name="comboBox_2">
+        <widget class="QComboBox" name="comboBox_windowing">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -1471,8 +1471,8 @@ margin: -15px 0px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1832</width>
-     <height>22</height>
+     <width>1838</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
