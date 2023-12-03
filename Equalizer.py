@@ -345,7 +345,7 @@ class MainApp(QMainWindow, MainUI):
             scene2 = QtWidgets.QGraphicsScene(self)
             canvas_4 = FigureCanvasQTAgg(self.fig_spectrogram_modified)
             self.graphicsView_modified.setScene(scene2)
-            scene.addWidget(canvas_4)
+            scene2.addWidget(canvas_4)
 
     def declaretion_mode(self,mode_name):
         if mode_name == 'Animal':
