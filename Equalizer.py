@@ -122,15 +122,15 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.animal_slider1.setMinimum(0)
         QCoreApplication.processEvents()
-        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl',1))
-        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog',2))
-        self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers',3))
-        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary',4))
-        self.music_slider1.valueChanged.connect(lambda: self.band_width('owl', 1))
-        self.music_slider2.valueChanged.connect(lambda: self.band_width('frog', 2))
-        self.music_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers', 3))
-        self.music_slider4.valueChanged.connect(lambda: self.band_width('canary', 4))
-        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', 0,360))
+        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl',self.animal_slider1.value()))
+        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog',self.animal_slider2.value()))
+        self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers',self.animal_slider3.value()))
+        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary',self.animal_slider4.value()))
+        self.music_slider1.valueChanged.connect(lambda: self.band_width('drums',  self.music_slider1.value()))
+        self.music_slider2.valueChanged.connect(lambda: self.band_width('flute', self.music_slider2.value()))
+        self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value()))
+        self.music_slider4.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider4.value()))
+        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value(),360))
         QCoreApplication.processEvents()
         self.ecg_slider0.valueChanged.connect(self.arrhythima)
         self.graph_btn_play.clicked.connect(self.toggle_channel_animation)
@@ -465,17 +465,18 @@ class MainApp(QMainWindow, MainUI):
             self.graphicsView_original.setScene(self.scene)
             self.scene.addWidget(canvas_1)
 
-    def band_width(self, name,index_slider,fs=44100):
+    def band_width(self, name,amp,fs=44100):
         data_bands = self.declaretion_mode(self.mode)
         band_width_bin = data_bands[name]
-        if self.mode == "Animal":
-            amp = int(self.animal_slider+str(index_slider).value())
-        if self.mode == "ecg":
-            amp = int(self.ecg_slider0.value())
-        if self.mode == "Uniform":
-            amp = int(self.uni_slider+str(index_slider).value())
-        if self.mode == 'Musical':
-            amp = int(self.music_slider+str(index_slider).value())
+        amp = int(amp)
+        # if self.mode == "Animal":
+        #     amp = int(self.animal_slider1.value())
+        # if self.mode == "ecg":
+        #     amp = int(self.ecg_slider0.value())
+        # if self.mode == "Uniform":
+        #     amp = int(self.uni_slider+str(index_slider).value())
+        # if self.mode == 'Musical':
+        #     amp = int(self.music_slider+str(index_slider).value())
 
 
 
