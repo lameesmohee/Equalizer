@@ -277,9 +277,10 @@ class MainApp(QMainWindow, MainUI):
             self.graphicsView_modified.setScene(self.scene2)
             self.scene2.addWidget(canvas)
         else:
-            self.path_original_data = file_path
+
             self.data_original = self.data_signal
             if not self.changed_data:
+                self.path_original_data = file_path
                 self.Plot(self.data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
             self.changed_data = False
 
@@ -301,7 +302,7 @@ class MainApp(QMainWindow, MainUI):
         scene.addWidget(canvas_3)
 
     def declaretion_mode(self,mode_name):
-        if mode_name == 'animal':
+        if mode_name == 'Animal':
             animal_dict = {
                 "owl": np.array([650, 950, -650, -950]),
                 "frog": np.array([950, 1900, -950, -1900]),
@@ -311,7 +312,7 @@ class MainApp(QMainWindow, MainUI):
 
             }
             return animal_dict
-        if mode_name == 'uni':
+        if mode_name == 'Uniform':
             uniform_dict = {
                 "1": np.array([0, 500, 0, -500]),
                 "2": np.array([500, 1000, -500, -1000]),
@@ -326,7 +327,7 @@ class MainApp(QMainWindow, MainUI):
 
             }
             return uniform_dict
-        if mode_name == "music":
+        if mode_name == "Musical":
             musical_dict={
                 "xyloohone": np.array([2000, 3000, -2000, -3000]),
                 "drums": np.array([0, 1000, 0, -1000]),
@@ -813,10 +814,10 @@ class MainApp(QMainWindow, MainUI):
         self.Reset = True
         self.changed_data =True
         self.times_of_modified = 0
+        if len(self.modified_signal_after_inverse) > 1:
+            self.ani_2.pause()
+            self.fig_modified.clf()
 
-        self.ani_2.pause()
-
-        self.fig_modified.clf()
 
         self.modified_signal_after_inverse = []
 
@@ -872,9 +873,10 @@ class MainApp(QMainWindow, MainUI):
 
 
 
-    def padding(self,data_padded,padding_size):
-        data_after_padding = np.concatenate([data_padded,np.zeros(padding_size-len(data_padded))])
-        return data_after_padding
+    def padding(self,window,padding_size):
+        window = np.concatenate([window,np.zeros(padding_size-len(window))])
+        return window
+
 
 
 
@@ -883,40 +885,26 @@ class MainApp(QMainWindow, MainUI):
         data_negv_after_convolution = []
         data_remind_pos=[]
         data_remind_negv=[]
+        frequencies, amplitudes, window_transform = self.Fourier_Transform(window, 1)
         for data_pos,data_negv in zip(data_bands_pos,data_bands_negv):
-            padding_size = len(data_pos)
-            if padding_size >= window_size:
-                print(f"pos:{len(data_pos)},negv:{len(data_negv)}")
-                # window_after_padding = self.padding(window,padding_size)
-                frequencies, amplitudes, window_transform = self.Fourier_Transform(window, 1)
-                # window_after_padding = self.padding(window, padding_size)
-                # window_transform = fft(window,len(data_pos))
-                print(f"data:{data_pos}")
-                data_pos_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
-                                                                                     data_pos[:window_size],
-                                                                                     500))
+            data_pos_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
+                                                                                 data_pos[:window_size],
+                                                                                 1))
 
-                data_negv_after_convolution.append(self.split_numpy_array_into_chunks(window_transform, data_negv[:window_size], 1))
-                data_remind_pos.append(data_pos[window_size:])
-                data_remind_negv.append(data_negv[window_size:])
+            data_negv_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
+                                                                                  data_negv[:window_size],
+                                                                                  1))
+            data_remind_pos.append(data_pos[window_size:])
+            data_remind_negv.append(data_negv[window_size:])
 
-            else:
-                frequencies, amplitudes, window_transform = self.Fourier_Transform(window, 1)
-                data_pos_after_padding = np.concatenate([data_pos, np.zeros(window_size - padding_size)])
-                # data_negv_after_padding = np.concatenate([data_negv, np.zeros(window_size - padding_size)])
-                data_pos_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
-                                                                                     data_pos_after_padding,
-                                                                                     1000))
-                # data_negv_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,data_negv_after_padding,1000))
 
         data_after_convolution = np.concatenate([np.concatenate(data_pos_after_convolution),
-                                                np.concatenate(data_negv_after_convolution)]
-                                                )
-        # data_after_convolution = np.concatenate(data_pos_after_convolution)
-        data_remind= np.concatenate([np.concatenate(data_remind_pos),
-                                     np.concatenate(data_remind_negv)
+                                                np.concatenate(data_negv_after_convolution)
+                                                ])
 
-                                     ])
+        data_remind = np.concatenate([np.concatenate(data_remind_pos),
+                                     np.concatenate(data_remind_negv)
+                                      ])
         data_after_convolution = np.concatenate([data_after_convolution,data_remind])
         return data_after_convolution
 
