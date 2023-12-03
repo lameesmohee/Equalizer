@@ -60,18 +60,19 @@ class MainApp(QMainWindow, MainUI):
         self.uni_labels_list = [self.uni_freq1, self.uni_freq2, self.uni_freq3, self.uni_freq4, self.uni_freq5,
                                 self.uni_freq6, self.uni_freq7, self.uni_freq8, self.uni_freq9, self.uni_freq10]
         self.animal_labels_list = [self.owl_label, self.frog_label, self.grasshoppers_label, self.canary_label]
+        self.music_labels_list = [self.xylophone_label, self.drums_label, self.piano_label, self.flute_label]
         self.mode_index = 0
         self.fig_original = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
         self.fig_modified = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
         self.fig_spectrogram_original = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
-
+        self.fig_spectrogram_modified = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
         self.ax_original = self.fig_original.add_subplot(111)
         self.ax_modified = self.fig_modified.add_subplot(111)
         self.fig_frequecies = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
         self.ax_modified.set_position([0.1, 0.3, 0.75, 0.65])
         self.ax_original.set_position([0.1, 0.3, 0.75, 0.65])
         self.ax_frequecies = self.fig_frequecies.subplots()
-        self.ax_frequecies.set_position([0.1, 0.24, 0.75, 0.65])
+        self.ax_frequecies.set_position([0.1, 0.3, 0.75, 0.65])
         self.x_fig_original = []
         self.x_fig_modified = []
         self.y_fig_original = []
@@ -118,6 +119,13 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.graphicsView_original.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         QCoreApplication.processEvents()
+        self.graphicsView_windowing.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        QCoreApplication.processEvents()
+        self.graphicsView_windowing.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        QCoreApplication.processEvents()
+        self.graphicsView_modified.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        QCoreApplication.processEvents()
+        self.graphicsView_modified.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.animal_slider1.setMaximum(5)
         QCoreApplication.processEvents()
         self.animal_slider1.setMinimum(0)
@@ -171,6 +179,7 @@ class MainApp(QMainWindow, MainUI):
         self.uni_slider10.valueChanged.connect(lambda: self.band_width('10',10))
         QCoreApplication.processEvents()
         self.comboBox_windowing.currentTextChanged.connect(self.check_type_window)
+        self.comboBox_windowing.currentTextChanged.connect(self.on_combobox_changed)
 
     def styles(self):
         zoom_in_icon = icon("ei.zoom-in", color='black')
@@ -185,6 +194,28 @@ class MainApp(QMainWindow, MainUI):
         self.pan_btn.setIcon(pan_icon)
         reset_icon = icon("msc.debug-restart", color="black")
         self.reset_btn.setIcon(reset_icon)
+        self.length_input.hide()
+        self.length_label.hide()
+        self.std_label.hide()
+        self.std_input.hide()
+        self.enter_window.hide()
+
+
+    def on_combobox_changed(self, index):
+        if index < 3:
+            self.length_input.show()
+            self.length_label.show()
+            self.enter_window.show()
+            self.std_label.hide()
+            self.std_input.hide()
+            self.enter_window.move(400,130)
+        else:
+            self.length_input.show()
+            self.length_label.show()
+            self.std_label.show()
+            self.std_input.show()
+            self.enter_window.show()
+            self.enter_window.move(500,130)
 
     def play_pause_audio(self, button_name):
         # Toggling the Play and Pause for the audio
@@ -277,10 +308,9 @@ class MainApp(QMainWindow, MainUI):
             self.graphicsView_modified.setScene(self.scene2)
             self.scene2.addWidget(canvas)
         else:
-
+            self.path_original_data = file_path
             self.data_original = self.data_signal
             if not self.changed_data:
-                self.path_original_data = file_path
                 self.Plot(self.data_signal, self.sampling_rate, end_time, self.ax_original, self.animate_fig_original)
             self.changed_data = False
 
@@ -289,9 +319,13 @@ class MainApp(QMainWindow, MainUI):
             self.plot_spectrogram(self.data_signal, self.sampling_rate)
         else:
             self.fig_spectrogram_original.clear()
+            if (len(self.modified_signal_after_inverse)>1):
+                self.fig_spectrogram_modified.clear()
+
 
 
     def plot_spectrogram(self, original_audio, sampling_rate):
+        self.fig_spectrogram_original = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
         f, t, Sxx = signal.spectrogram(original_audio, sampling_rate, scaling='spectrum')
         plt.pcolormesh(t, f, np.log10(Sxx))
         plt.ylabel('f [Hz]')
@@ -300,6 +334,16 @@ class MainApp(QMainWindow, MainUI):
         canvas_3 = FigureCanvasQTAgg(self.fig_spectrogram_original)
         self.graphicsView_original.setScene(scene)
         scene.addWidget(canvas_3)
+        if (len(self.modified_signal_after_inverse) > 1):
+            self.fig_spectrogram_modified = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
+            f_modified, t_modified, Sxx_modified = signal.spectrogram(self.modified_signal_after_inverse, sampling_rate, scaling='spectrum')
+            plt.pcolormesh(t_modified, f_modified, np.log10(Sxx_modified))
+            plt.ylabel('f [Hz]')
+            plt.xlabel('t [sec]')
+            scene2 = QtWidgets.QGraphicsScene(self)
+            canvas_4 = FigureCanvasQTAgg(self.fig_spectrogram_modified)
+            self.graphicsView_modified.setScene(scene2)
+            scene.addWidget(canvas_4)
 
     def declaretion_mode(self,mode_name):
         if mode_name == 'Animal':
@@ -308,26 +352,25 @@ class MainApp(QMainWindow, MainUI):
                 "frog": np.array([950, 1900, -950, -1900]),
                 "canary": np.array([3000, 5500, -3000, -5500]),
                 "grasshoppers" : np.array([6000, 30000, -6000, -30000])
-
-
             }
             return animal_dict
+        
         if mode_name == 'Uniform':
             uniform_dict = {
-                "1": np.array([0, 500, 0, -500]),
-                "2": np.array([500, 1000, -500, -1000]),
-                "3": np.array([1000, 1500, -1000, -1500]),
-                "4": np.array([1500, 2000, -1500, -2000]),
-                "5": np.array([2000, 2500, -2000, -2500]),
-                "6": np.array([2000, 2500, -2000, -2500]),
-                "7": np.array([3000, 3500, -3000, -3500]),
-                "8": np.array([3500, 4000, -3500, -4000]),
-                "9": np.array([4000, 4500, -4000, -4500]),
-                "10": np.array([4500, 5000, -4500, -5000])
-
+                "1": np.array([0, 2000, 0, -2000]),
+                "2": np.array([2000, 4000, -2000, -4000]),
+                "3": np.array([4000, 6000, -4000, -6000]),
+                "4": np.array([6000, 8000, -6000, -8000]),
+                "5": np.array([8000, 10000, -8000, -10000]),
+                "6": np.array([10000, 12000, -10000, -12000]),
+                "7": np.array([12000, 14000, -12000, -14000]),
+                "8": np.array([14000, 16000, -14000, -16000]),
+                "9": np.array([16000, 18000, -16000, -18000]),
+                "10": np.array([18000, 20000, -18000, -20000])
             }
             return uniform_dict
-        if mode_name == "Musical":
+        
+        if mode_name == "Music":
             musical_dict={
                 "xyloohone": np.array([2000, 3000, -2000, -3000]),
                 "drums": np.array([0, 1000, 0, -1000]),
@@ -335,33 +378,24 @@ class MainApp(QMainWindow, MainUI):
                 'flute': np.array([3400, 25000, -3400, -25000])
             }
             return musical_dict
+        
         if mode_name == 'ecg':
             ecg_dict={
                 'ecg': np.array([1, 5, -1, -5])
             }
             return ecg_dict
 
-
-
-
     def animate_fig_original(self, i, length_data, data):
         # print(f"i:{i}")
         if self.modified_signal or self.Windowing or self.Reset:
             print("lamaaa")
             self.ani_1.resume()
-            # self.ani_1.event_source.stop()
-            # self.ani_11.event_source.stop()
             if self.Reset:
                 print("Reset")
                 self.Reset = False
 
             no_of_frames = int(np.floor(length_data) / 1000)
             self.modified_signal = False
-
-
-            # if i > 0: # we can not stop animation if it does not start
-            #     self.ani_1 = FuncAnimation(self.fig_original, self.animate_fig_original, interval=self.Delay_interval,
-            #                                frames=no_of_frames, repeat=False, fargs=(length_data, data), blit=False)
 
             QCoreApplication.processEvents()
             self.specific_row = 0
@@ -397,9 +431,6 @@ class MainApp(QMainWindow, MainUI):
         self.specific_row += self.no_of_points
         if self.specific_row <= length_data - 1:
             self.check_ended_animation_1 = False
-            # print(f"no of points{self.no_of_points,self.specific_row}")
-            # print(f"data:{data[self.specific_row]}")
-            # print(f".specific_row:{self.specific_row}")
             data_array = np.array(data)
             time_array = np.array(self.time)
             # Slice the arrays
@@ -417,23 +448,15 @@ class MainApp(QMainWindow, MainUI):
     def animate_fig_modified(self, i, length_data, data):
         print(f"i_2:{i}")
         if self.specific_row <= length_data - 1:
-
-            # print(f"data:{data[self.specific_row]}")
-            # print(f".specific_row_2:{self.specific_row}")
             data_array = np.array(data)
             time_array = np.array(self.time)
-            # print("animation 2 is started")
-
             # Slice the arrays
             data_sliced = data_array[:self.specific_row]
             time_sliced = time_array[:self.specific_row]
             self.y_fig_modified, self.x_fig_modified = data_sliced.tolist(), time_sliced.tolist()
-
             self.line2.set_data(self.x_fig_modified, self.y_fig_modified)
 
-            # print(f"runtime:{(end - self.start) * 1000}")
             if self.specific_row > 1000:
-
                 self.ax_modified.set_xlim(self.time[self.specific_row - 1000], self.time[self.specific_row])
 
         return self.line2,
@@ -478,10 +501,6 @@ class MainApp(QMainWindow, MainUI):
         #     amp = int(self.uni_slider+str(index_slider).value())
         # if self.mode == 'Musical':
         #     amp = int(self.music_slider+str(index_slider).value())
-
-
-
-
         print(f"amp:{amp}")
 
         print()
@@ -549,40 +568,40 @@ class MainApp(QMainWindow, MainUI):
 
     
     def arrhythima(self):
-        # ecg = electrocardiogram()
-        # fs = 360
+        ecg = electrocardiogram()
+        fs = 360
         time = np.arange(self.data_original.size) / 360
-        # # time = np.linespace(0,)
-        # rfrequency, amplitude, modified_signal_list = self.Fourier_Transform(ecg, fs)
-        # # self.Plot_frequency_spectrum(ecg, 360)
-        # # fft_file = sc.fft.rfft(ecg)
-        # # amplitude = np.abs(fft_file)
-        # phase = np.angle(modified_signal_list)
-        # # rfrequency = sc.fft.rfftfreq(len(ecg), 1/fs)
-        # value = 0
-        # band_index_pos = np.where((rfrequency >= 1) & (rfrequency < 5))
-        # band_index_neg = np.where((rfrequency >= -5) & (rfrequency < -1))
-        # for i in band_index_pos:
-        #    amplitude[i] = value * amplitude[i]
-        # for i in band_index_neg:
-        #     amplitude[i] = value * amplitude[i]
-        # # phase = np.angle(modified_signal_list)
-        # modified_signal_list = np.multiply(amplitude, np.exp(1j*phase))
-        # modified_signal_after_inverse = ifft(modified_signal_list)
-        # # df = pd.DataFrame({'time': time, 'amplitude': ecg,
-        # #                 'modified_amplitude': modified_signal_after_inverse})
-        # # rows_until_45sec = df.loc[df['time'] <= float(45)]
-        # # rows_until_51sec = df.loc[df['time'] <= float(51)]
-        # # df = df.loc[len(rows_until_45sec):len(rows_until_51sec)]
-        # self.Plot_frequency_spectrum(modified_signal_after_inverse,360)
-        # self.arr_scene = QtWidgets.QGraphicsScene()
-        # canvas_1 = FigureCanvasQTAgg(self.fig_original)
-        # QCoreApplication.processEvents()
-        # self.graphicsView_original.setScene(self.arr_scene)
-        # self.arr_scene.addWidget(canvas_1)
-        # self.ax_original.set_xlim(45, 51)
-        # self.ax_original.set_ylim(-2, 3.5)
-        # self.ax_original.plot(time, ecg, color='g')
+        # time = np.linespace(0,)
+        rfrequency, amplitude, modified_signal_list = self.Fourier_Transform(ecg, fs)
+        # self.Plot_frequency_spectrum(ecg, 360)
+        # fft_file = sc.fft.rfft(ecg)
+        # amplitude = np.abs(fft_file)
+        phase = np.angle(modified_signal_list)
+        # rfrequency = sc.fft.rfftfreq(len(ecg), 1/fs)
+        value = 0
+        band_index_pos = np.where((rfrequency >= 1) & (rfrequency < 5))
+        band_index_neg = np.where((rfrequency >= -5) & (rfrequency < -1))
+        for i in band_index_pos:
+           amplitude[i] = value * amplitude[i]
+        for i in band_index_neg:
+            amplitude[i] = value * amplitude[i]
+        phase = np.angle(modified_signal_list)
+        modified_signal_list = np.multiply(amplitude, np.exp(1j*phase))
+        modified_signal_after_inverse = ifft(modified_signal_list)
+        # df = pd.DataFrame({'time': time, 'amplitude': ecg,
+        #                 'modified_amplitude': modified_signal_after_inverse})
+        # rows_until_45sec = df.loc[df['time'] <= float(45)]
+        # rows_until_51sec = df.loc[df['time'] <= float(51)]
+        # df = df.loc[len(rows_until_45sec):len(rows_until_51sec)]
+        self.Plot_frequency_spectrum(modified_signal_after_inverse,360)
+        self.arr_scene = QtWidgets.QGraphicsScene()
+        canvas_1 = FigureCanvasQTAgg(self.fig_original)
+        QCoreApplication.processEvents()
+        self.graphicsView_original.setScene(self.arr_scene)
+        self.arr_scene.addWidget(canvas_1)
+        self.ax_original.set_xlim(45, 51)
+        self.ax_original.set_ylim(-2, 3.5)
+        self.ax_original.plot(time, ecg, color='g')
 
         self.arr_scene_modified = QtWidgets.QGraphicsScene()
         canvas_2 = FigureCanvasQTAgg(self.fig_modified)
@@ -642,6 +661,8 @@ class MainApp(QMainWindow, MainUI):
                 animal_slider.hide()
             for animal_label in self.animal_labels_list:
                 animal_label.hide()
+            for music_label in self.music_labels_list:
+                music_label.hide()
             self.ecg_slider0.hide()
             self.mode = "Uniform"
 
@@ -649,6 +670,8 @@ class MainApp(QMainWindow, MainUI):
         if self.mode_index == 1:
             for music_slider in self.music_sliders_list:
                 music_slider.show()
+            for music_label in self.music_labels_list:
+                music_label.show()
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.hide()
             for uni_label in self.uni_labels_list:
@@ -672,6 +695,8 @@ class MainApp(QMainWindow, MainUI):
                 uni_label.hide()
             for music_slider in self.music_sliders_list:
                 music_slider.hide()
+            for music_label in self.music_labels_list:
+                music_label.hide()
             self.ecg_slider0.hide()
             self.mode = "Animal"
 
@@ -681,13 +706,15 @@ class MainApp(QMainWindow, MainUI):
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.hide()
             for uni_label in self.uni_labels_list:
-                uni_label.show()
+                uni_label.hide()
             for music_slider in self.music_sliders_list:
                 music_slider.hide()
             for animal_slider in self.animal_sliders_list:
                 animal_slider.hide()
             for animal_label in self.animal_labels_list:
                 animal_label.hide()
+            for music_label in self.music_labels_list:
+                music_label.hide()
             self.mode = "ecg"
             self.ecg()
 
@@ -814,10 +841,10 @@ class MainApp(QMainWindow, MainUI):
         self.Reset = True
         self.changed_data =True
         self.times_of_modified = 0
-        if len(self.modified_signal_after_inverse) > 1:
-            self.ani_2.pause()
-            self.fig_modified.clf()
 
+        self.ani_2.pause()
+
+        self.fig_modified.clf()
 
         self.modified_signal_after_inverse = []
 
@@ -873,10 +900,9 @@ class MainApp(QMainWindow, MainUI):
 
 
 
-    def padding(self,window,padding_size):
-        window = np.concatenate([window,np.zeros(padding_size-len(window))])
-        return window
-
+    def padding(self,data_padded,padding_size):
+        data_after_padding = np.concatenate([data_padded,np.zeros(padding_size-len(data_padded))])
+        return data_after_padding
 
 
 
@@ -885,34 +911,42 @@ class MainApp(QMainWindow, MainUI):
         data_negv_after_convolution = []
         data_remind_pos=[]
         data_remind_negv=[]
-        frequencies, amplitudes, window_transform = self.Fourier_Transform(window, 1)
         for data_pos,data_negv in zip(data_bands_pos,data_bands_negv):
-            data_pos_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
-                                                                                 data_pos[:window_size],
-                                                                                 1))
+            padding_size = len(data_pos)
+            if padding_size >= window_size:
+                print(f"pos:{len(data_pos)},negv:{len(data_negv)}")
+                # window_after_padding = self.padding(window,padding_size)
+                frequencies, amplitudes, window_transform = self.Fourier_Transform(window, 1)
+                # window_after_padding = self.padding(window, padding_size)
+                # window_transform = fft(window,len(data_pos))
+                print(f"data:{data_pos}")
+                data_pos_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
+                                                                                     data_pos[:window_size],
+                                                                                     500))
 
-            data_negv_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
-                                                                                  data_negv[:window_size],
-                                                                                  1))
-            data_remind_pos.append(data_pos[window_size:])
-            data_remind_negv.append(data_negv[window_size:])
+                data_negv_after_convolution.append(self.split_numpy_array_into_chunks(window_transform, data_negv[:window_size], 1))
+                data_remind_pos.append(data_pos[window_size:])
+                data_remind_negv.append(data_negv[window_size:])
 
+            else:
+                frequencies, amplitudes, window_transform = self.Fourier_Transform(window, 1)
+                data_pos_after_padding = np.concatenate([data_pos, np.zeros(window_size - padding_size)])
+                # data_negv_after_padding = np.concatenate([data_negv, np.zeros(window_size - padding_size)])
+                data_pos_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,
+                                                                                     data_pos_after_padding,
+                                                                                     1000))
+                # data_negv_after_convolution.append(self.split_numpy_array_into_chunks(window_transform,data_negv_after_padding,1000))
 
         data_after_convolution = np.concatenate([np.concatenate(data_pos_after_convolution),
-                                                np.concatenate(data_negv_after_convolution)
-                                                ])
-
-        data_remind = np.concatenate([np.concatenate(data_remind_pos),
+                                                np.concatenate(data_negv_after_convolution)]
+                                                )
+        # data_after_convolution = np.concatenate(data_pos_after_convolution)
+        data_remind= np.concatenate([np.concatenate(data_remind_pos),
                                      np.concatenate(data_remind_negv)
-                                      ])
+
+                                     ])
         data_after_convolution = np.concatenate([data_after_convolution,data_remind])
         return data_after_convolution
-
-
-
-
-
-
 
     def get_data_band(self,bands):
         data_length, data = self.get_information_data()
