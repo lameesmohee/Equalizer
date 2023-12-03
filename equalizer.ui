@@ -760,7 +760,7 @@ margin: -15px 0px;
           <enum>Qt::Vertical</enum>
          </property>
         </widget>
-        <widget class="QSlider" name="ecg_slider">
+        <widget class="QSlider" name="ecg_slider0">
          <property name="geometry">
           <rect>
            <x>510</x>
