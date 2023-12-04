@@ -180,6 +180,17 @@ QComboBox::down-arrow {
     margin-right: 15px;
 }</string>
          </property>
+         <property name="editable">
+          <bool>false</bool>
+         </property>
+         <property name="currentText">
+          <string>No Window</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>No Window</string>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>Rectagular</string>
@@ -1025,8 +1036,7 @@ margin: -15px 0px;
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">
-</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>4000</string>
@@ -1766,7 +1776,7 @@ margin: -15px 0px;
      <x>0</x>
      <y>0</y>
      <width>1838</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

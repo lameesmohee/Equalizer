@@ -134,10 +134,10 @@ class MainApp(QMainWindow, MainUI):
         self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog',self.animal_slider2.value()))
         self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers',self.animal_slider3.value()))
         self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary',self.animal_slider4.value()))
-        self.music_slider1.valueChanged.connect(lambda: self.band_width('drums',  self.music_slider1.value()))
-        self.music_slider2.valueChanged.connect(lambda: self.band_width('flute', self.music_slider2.value()))
+        self.music_slider1.valueChanged.connect(lambda: self.band_width('xylophone',  self.music_slider1.value()))
+        self.music_slider2.valueChanged.connect(lambda: self.band_width('drums', self.music_slider2.value()))
         self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value()))
-        self.music_slider4.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider4.value()))
+        self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value()))
         self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value(),360))
         QCoreApplication.processEvents()
         self.ecg_slider0.valueChanged.connect(self.arrhythima)
@@ -180,6 +180,7 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.comboBox_windowing.currentTextChanged.connect(self.check_type_window)
         self.comboBox_windowing.currentTextChanged.connect(self.on_combobox_changed)
+        self.enter_window.clicked.connect(self.get_window_size)
 
     def styles(self):
         zoom_in_icon = icon("ei.zoom-in", color='black')
@@ -202,20 +203,42 @@ class MainApp(QMainWindow, MainUI):
 
 
     def on_combobox_changed(self, index):
-        if index < 3:
+        current_window = self.check_type_window()
+        if current_window == "Gaussian":
             self.length_input.show()
             self.length_label.show()
             self.enter_window.show()
-            self.std_label.hide()
-            self.std_input.hide()
-            self.enter_window.move(400,130)
-        else:
-            self.length_input.show()
-            self.length_label.show()
             self.std_label.show()
             self.std_input.show()
             self.enter_window.show()
-            self.enter_window.move(500,130)
+            self.enter_window.move(400,130)
+        else:
+            if current_window == "No Window":
+                self.reset()
+                self.length_input.hide()
+                self.length_label.hide()
+                self.enter_window.hide()
+            else:
+                self.length_input.show()
+                self.length_label.show()
+                self.enter_window.show()
+                self.enter_window.move(500, 130)
+            self.std_label.hide()
+            self.std_input.hide()
+
+    def get_window_size(self):
+        current_window = self.check_type_window()
+        window_size = int(self.length_input.text())
+        if len(self.std_input.text()) > 1:
+            std = float(self.std_input.text())
+        else:
+            std = 0
+
+        print(f"window_size:{self.length_input.text()}")
+        self.windowing(current_window , window_size=window_size, sigma=std)
+
+
+
 
     def play_pause_audio(self, button_name):
         # Toggling the Play and Pause for the audio
@@ -240,18 +263,41 @@ class MainApp(QMainWindow, MainUI):
             audio_progress.setMaximum(media_name.duration())
         audio_progress.setValue(media_name.position())
 
+    def set_audio(self,file_path,player):
+        if player == 1:
+            self.media_player.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
+            self.media_player.play()
+            self.graph_btn_play.setText("❚❚")
+            self.play_pause_audio_button.setText('❚❚')
+            self.play_pause_audio_button_2.setText('►')
+        else:
+            self.media_player_modified_signal.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
+            QCoreApplication.processEvents()
+            self.media_player_modified_signal.play()
+            QCoreApplication.processEvents()
+            self.play_pause_audio_button_2.setText('❚❚')
+            QCoreApplication.processEvents()
+            self.play_pause_audio_button.setText('►')
+            QCoreApplication.processEvents()
+            self.media_player.pause()
+            QCoreApplication.processEvents()
+        return
+
+
+
     def add_audio(self):
         # Reading the audio
         self.file_path, _ = QFileDialog.getOpenFileName(self, "Open Audio File", os.path.expanduser("~"),
                                                    "Audio Files (*.mp3 *.wav)")
         if self.file_path:
+            self.delete()
+            self.times_of_modified += 1
             self.x_fig_original = []
             self.time = []
-            self.media_player.setMedia(QMediaContent(QUrl.fromLocalFile(self.file_path)))
             self.Read_signal(file_path=self.file_path)
-            self.media_player.play()
-            self.graph_btn_play.setText("❚❚")
-            self.play_pause_audio_button.setText('❚❚')
+            self.set_audio(file_path=self.file_path,player=1)
+
+
 
     def Write_modified_signal(self, modified_signal):
         directory_path, file_name = os.path.split(self.file_path)
@@ -279,19 +325,13 @@ class MainApp(QMainWindow, MainUI):
             print(f"Error: {e}")
         print("Modified file written to:", file_path)
         # Continue with the rest of your code
-        if not self.Windowing:
+        if not self.changed_data:
             self.modified_signal = True
+            self.set_audio(file_path=file_path, player=2)
 
-        self.media_player_modified_signal.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
-        QCoreApplication.processEvents()
-        self.media_player_modified_signal.play()
-        QCoreApplication.processEvents()
-        self.play_pause_audio_button_2.setText('❚❚')
-        QCoreApplication.processEvents()
-        self.play_pause_audio_button.setText('►')
-        QCoreApplication.processEvents()
-        self.media_player.pause()
-        QCoreApplication.processEvents()
+        else:
+            self.set_audio(file_path=file_path, player=1)
+
         self.Read_signal(file_path)
 
     def Read_signal(self, file_path):
@@ -318,10 +358,15 @@ class MainApp(QMainWindow, MainUI):
     def check_spectro_state_changed(self, state):
         if state == 2:  # 2 corresponds to checked state
             self.plot_spectrogram(self.data_signal, self.sampling_rate)
+            print("lllllllllll")
         else:
-            self.fig_spectrogram_original.clear()
+            print("pppppp")
+            self.graphicsView_original.scene().clear()
+            self.graphicsView_original.setScene(self.scene)
+
             if len(self.modified_signal_after_inverse) > 1:
-                self.fig_spectrogram_modified.clear()
+                self.fig_spectrogram_modified.clf()
+                self.graphicsView_modified.setScene(self.scene2)
 
 
 
@@ -331,10 +376,12 @@ class MainApp(QMainWindow, MainUI):
         plt.pcolormesh(t, f, np.log10(Sxx))
         plt.ylabel('f [Hz]')
         plt.xlabel('t [sec]')
-        scene = QtWidgets.QGraphicsScene(self)
+        print(f"before scene:{self.graphicsView_original.scene()}")
+        scene5 = QtWidgets.QGraphicsScene(self)
         canvas_3 = FigureCanvasQTAgg(self.fig_spectrogram_original)
-        self.graphicsView_original.setScene(scene)
-        scene.addWidget(canvas_3)
+        self.graphicsView_original.setScene(scene5)
+        print(f"After scene:{self.graphicsView_original.scene()}")
+        scene5.addWidget(canvas_3)
         if len(self.modified_signal_after_inverse) > 1:
             print("kkkk")
             self.fig_spectrogram_modified = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
@@ -372,9 +419,9 @@ class MainApp(QMainWindow, MainUI):
             }
             return uniform_dict
         
-        if mode_name == "Music":
+        if mode_name == "Musical":
             musical_dict={
-                "xyloohone": np.array([2000, 3000, -2000, -3000]),
+                "xylophone": np.array([2000, 3000, -2000, -3000]),
                 "drums": np.array([0, 1000, 0, -1000]),
                 'piano': np.array([1000, 2300, -1000, -2300]),
                 'flute': np.array([3400, 25000, -3400, -25000])
@@ -391,24 +438,31 @@ class MainApp(QMainWindow, MainUI):
         # print(f"i:{i}")
         if self.modified_signal or self.Windowing or self.Reset:
             print("lamaaa")
-            self.ani_1.resume()
+            self.ani_1.pause()
             if self.Reset:
                 print("Reset")
                 self.Reset = False
 
             no_of_frames = int(np.floor(length_data) / 1000)
             self.modified_signal = False
+            if i > 0:
+                self.ani_1 = FuncAnimation(self.fig_original, self.animate_fig_original, interval=self.Delay_interval,
+                                           frames=no_of_frames, repeat=False, fargs=(length_data, data), blit=False)
+
+
 
             QCoreApplication.processEvents()
             self.specific_row = 0
             self.y_fig_original = []
             self.x_fig_original = []
-            self.ax_frequecies.clear()
+            if not self.Windowing:
+                self.ax_frequecies.clear()
+
             self.Plot_frequency_spectrum(self.data_original)
             self.Windowing = False
             print("lllll")
             if len(self.modified_signal_after_inverse) > 1:
-                if self.times_of_modified > 1 or len(self.x_fig_modified) > 1:
+                if len(self.x_fig_modified) > 1:
                     self.ani_2.pause()
 
                 self.y_fig_modified = []
@@ -496,9 +550,6 @@ class MainApp(QMainWindow, MainUI):
         band_width_bin = data_bands[name]
         amp = int(amp)
         print(f"amp:{amp}")
-
-
-
         print(f"band:{band_width_bin}")
         print(f"index:{name}")
         self.Modify_frequency(band_width_bin, amp,fs)
@@ -551,10 +602,12 @@ class MainApp(QMainWindow, MainUI):
 
     def plot_windowing(self,window_data,data):
         print("arrived")
+        self.ax_frequecies.clear()
         for item in data:
             print(f"len_window:{len(window_data)},len_data:{len(item)}")
             print(f"item:{item}")
             window = self.padding(window_data, len(item))
+            print("yyyyyyyyy")
             self.ax_frequecies.plot(item,500*window, color='r')
             self.fig_frequecies.canvas.draw()
 
@@ -572,7 +625,7 @@ class MainApp(QMainWindow, MainUI):
             print("HALLO")
             self.y_min, self.y_max = min(amplitudes),max(amplitudes)
         # self.ax_frequecies.set_xlim(650, 670)
-        self.ax_frequecies.set_ylim(self.y_min, self.y_max )
+        self.ax_frequecies.set_ylim(self.y_min, self.y_max)
         self.ax_frequecies.plot(frequencies_bin, amplitudes, color='g')
         return
 
@@ -661,6 +714,21 @@ class MainApp(QMainWindow, MainUI):
         self.ax_original.set_xlim(45, 51)
         self.ax_original.set_ylim(-2, 3.5)
         self.ax_original.plot(time, self.data_original, color='g')
+
+
+
+
+    def delete(self):
+        if self.times_of_modified > 1:
+            self.ani_1.pause()
+            self.set_audio(file_path=None,player=1)
+            self.set_audio(file_path=None, player=2)
+            self.graphicsView_original.scene().clear()
+            self.graphicsView_windowing.scene().clear()
+            if len(self.modified_signal_after_inverse) > 1:
+                self.ani_2.pause()
+                self.graphicsView_modified.scene().clear()
+
 
     def Zoom_out(self):
         y_min, y_max = self.ax_original.get_ylim()
@@ -772,10 +840,10 @@ class MainApp(QMainWindow, MainUI):
         self.times_of_modified = 0
         if len(self.modified_signal_after_inverse) > 1:
             self.ani_2.pause()
-            self.fig_modified.clf()
-
+            self.graphicsView_modified.scene().clear()
+            self.set_audio(file_path=None, player=2)
         self.modified_signal_after_inverse = []
-
+        self.set_audio(file_path=self.path_original_data, player=1)
         self.Read_signal(self.path_original_data)
         # audio_progress.setValue(0)
 
@@ -784,7 +852,8 @@ class MainApp(QMainWindow, MainUI):
 
     def check_type_window(self):
         window_name = self.comboBox_windowing.currentText()
-        self.windowing(window_name, window_size=100)
+        return window_name
+
 
 
     def get_information_data(self):
