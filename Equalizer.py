@@ -51,17 +51,44 @@ class MainApp(QMainWindow, MainUI):
         self.uniform_sliders_list = [self.uni_slider1, self.uni_slider2, self.uni_slider3, self.uni_slider4,
                                      self.uni_slider5, self.uni_slider6, self.uni_slider7, self.uni_slider8,
                                      self.uni_slider9, self.uni_slider10]
+        
         self.music_sliders_list = [self.music_slider1, self.music_slider2, self.music_slider3, self.music_slider4]
+
         self.animal_sliders_list = [self.animal_slider1, self.animal_slider2, self.animal_slider3, self.animal_slider4]
+
         self.all_sliders_list = [self.uni_slider1, self.uni_slider2, self.uni_slider3, self.uni_slider4,
                                  self.uni_slider5, self.uni_slider6, self.uni_slider7, self.uni_slider8,
                                  self.uni_slider9, self.uni_slider10, self.music_slider1, self.music_slider2,
                                  self.music_slider3, self.music_slider4, self.animal_slider1, self.animal_slider2,
                                  self.animal_slider3, self.animal_slider4, self.ecg_slider0]
+        
         self.uni_labels_list = [self.uni_freq1, self.uni_freq2, self.uni_freq3, self.uni_freq4, self.uni_freq5,
                                 self.uni_freq6, self.uni_freq7, self.uni_freq8, self.uni_freq9, self.uni_freq10]
+        
         self.animal_labels_list = [self.owl_label, self.frog_label, self.grasshoppers_label, self.canary_label]
+
         self.music_labels_list = [self.xylophone_label, self.drums_label, self.piano_label, self.flute_label]
+
+        for slider in self.all_sliders_list:
+            slider.setMinimum(0)
+            slider.setMaximum(5)
+            slider.setValue(1)
+
+        self.amp_uniform_list = [self.amp_uni1, self.amp_uni2, self.amp_uni3, self.amp_uni4, self.amp_uni5,
+                                  self.amp_uni6, self.amp_uni7, self.amp_uni8, self.amp_uni9, self.amp_uni10]
+        
+        self.amp_animal_list = [self.amp_animal1, self.amp_animal2, self.amp_animal3, self.amp_animal4]
+
+        self.amp_music_list = [self.amp_music1, self.amp_music2, self.amp_music3, self.amp_music4]
+
+        self.all_amp_list = [self.amp_uni1, self.amp_uni2, self.amp_uni3, self.amp_uni4, self.amp_uni5,
+                                  self.amp_uni6, self.amp_uni7, self.amp_uni8, self.amp_uni9, self.amp_uni10,
+                                  self.amp_animal1, self.amp_animal2, self.amp_animal3, self.amp_animal4,
+                                  self.amp_music1, self.amp_music2, self.amp_music3, self.amp_music4, self.amp_ecg]
+        
+        for label in self.all_amp_list:
+            label.setStyleSheet("background-color: transparent;")
+
         self.mode_index = 0
         self.fig_original = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
         self.fig_modified = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
@@ -99,6 +126,7 @@ class MainApp(QMainWindow, MainUI):
         self.path_original_data = None
         self.ecg_slider0.hide()
         self.show_sliders()
+
         self.no_of_points = 1000
         self.media_player = QMediaPlayer()
         self.media_player_modified_signal = QMediaPlayer()
@@ -133,15 +161,15 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.animal_slider1.setMinimum(0)
         QCoreApplication.processEvents()
-        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl', self.animal_slider1.value()))
-        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog', self.animal_slider2.value()))
-        self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers', self.animal_slider3.value()))
-        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary', self.animal_slider4.value()))
-        self.music_slider1.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider1.value()))
-        self.music_slider2.valueChanged.connect(lambda: self.band_width('drums', self.music_slider2.value()))
-        self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value()))
-        self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value()))
-        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value(), 360))
+        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl', self.animal_slider1.value(), label = self.amp_animal1))
+        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog', self.animal_slider2.value(), label = self.amp_animal2))
+        self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers', self.animal_slider3.value(), label = self.amp_animal3))
+        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary', self.animal_slider4.value(), label = self.amp_animal4))
+        self.music_slider1.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider1.value(),label = self.amp_music1))
+        self.music_slider2.valueChanged.connect(lambda: self.band_width('drums', self.music_slider2.value(), label = self.amp_music2))
+        self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value(), label = self.amp_music3))
+        self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value(), label = self.amp_music4))
+        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value(), 360, label = self.amp_ecg))
         QCoreApplication.processEvents()
         self.ecg_slider0.valueChanged.connect(self.arrhythima)
         self.graph_btn_play.clicked.connect(self.toggle_channel_animation)
@@ -161,25 +189,25 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.graphicsView_windowing.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.check_spectro.stateChanged.connect(self.check_spectro_state_changed)
-        self.uni_slider1.valueChanged.connect(lambda: self.band_width('1', 1))
+        self.uni_slider1.valueChanged.connect(lambda: self.band_width('1', self.uni_slider1.value(), label = self.amp_uni1))
         QCoreApplication.processEvents()
-        self.uni_slider2.valueChanged.connect(lambda: self.band_width('2', 2))
+        self.uni_slider2.valueChanged.connect(lambda: self.band_width('2', self.uni_slider2.value(), label = self.amp_uni2))
         QCoreApplication.processEvents()
-        self.uni_slider3.valueChanged.connect(lambda: self.band_width('3', 3))
+        self.uni_slider3.valueChanged.connect(lambda: self.band_width('3', self.uni_slider3.value(), label = self.amp_uni3))
         QCoreApplication.processEvents()
-        self.uni_slider4.valueChanged.connect(lambda: self.band_width('4', 4))
+        self.uni_slider4.valueChanged.connect(lambda: self.band_width('4', self.uni_slider4.value(), label = self.amp_uni4))
         QCoreApplication.processEvents()
-        self.uni_slider5.valueChanged.connect(lambda: self.band_width('5', 5))
+        self.uni_slider5.valueChanged.connect(lambda: self.band_width('5', self.uni_slider5.value(), label = self.amp_uni5))
         QCoreApplication.processEvents()
-        self.uni_slider6.valueChanged.connect(lambda: self.band_width('6', 6))
+        self.uni_slider6.valueChanged.connect(lambda: self.band_width('6', self.uni_slider6.value(), label = self.amp_uni6))
         QCoreApplication.processEvents()
-        self.uni_slider7.valueChanged.connect(lambda: self.band_width('7', 7))
+        self.uni_slider7.valueChanged.connect(lambda: self.band_width('7', self.uni_slider7.value(), label = self.amp_uni7))
         QCoreApplication.processEvents()
-        self.uni_slider8.valueChanged.connect(lambda: self.band_width('8', 8))
+        self.uni_slider8.valueChanged.connect(lambda: self.band_width('8', self.uni_slider8.value(), label = self.amp_uni8))
         QCoreApplication.processEvents()
-        self.uni_slider9.valueChanged.connect(lambda: self.band_width('9', 9))
+        self.uni_slider9.valueChanged.connect(lambda: self.band_width('9', self.uni_slider9.value(), label = self.amp_uni9))
         QCoreApplication.processEvents()
-        self.uni_slider10.valueChanged.connect(lambda: self.band_width('10', 10))
+        self.uni_slider10.valueChanged.connect(lambda: self.band_width('10', self.uni_slider10.value(), label = self.amp_uni10))
         QCoreApplication.processEvents()
         self.comboBox_windowing.currentTextChanged.connect(self.check_type_window)
         self.comboBox_windowing.currentTextChanged.connect(self.on_combobox_changed)
@@ -536,7 +564,8 @@ class MainApp(QMainWindow, MainUI):
             self.graphicsView_original.setScene(self.scene)
             self.scene.addWidget(canvas_1)
 
-    def band_width(self, name, amp, fs=44100):
+    def band_width(self, name, amp, label, fs=44100):
+        label.setText(str(amp))
         data_bands = self.declaretion_mode(self.mode)
         band_width_bin = data_bands[name]
         amp = int(amp)
@@ -559,8 +588,8 @@ class MainApp(QMainWindow, MainUI):
         band_index_pos = np.logical_and(frequencies >= band_width[0], frequencies <= band_width[1])
         band_index_negv = np.logical_and(frequencies >= band_width[3], frequencies <= band_width[2])
 
-        modified_signal_list[band_index_pos] = 0 * modified_signal_list[band_index_pos]
-        modified_signal_list[band_index_negv] = 0 * modified_signal_list[band_index_negv]
+        modified_signal_list[band_index_pos] = modified_amp * modified_signal_list[band_index_pos]
+        modified_signal_list[band_index_negv] = modified_amp * modified_signal_list[band_index_negv]
 
         self.modified_signal_after_inverse = ifft(modified_signal_list)
         print(f"modify_data:{self.modified_signal_after_inverse}")
@@ -620,20 +649,26 @@ class MainApp(QMainWindow, MainUI):
     def show_sliders(self):
         self.mode_index = self.mode_options.currentIndex()
         if self.mode_index == 0:
-
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.show()
+            for label in self.amp_uniform_list:
+                label.show()
             for uni_label in self.uni_labels_list:
                 uni_label.show()
             for music_slider in self.music_sliders_list:
                 music_slider.hide()
+            for label in self.amp_music_list:
+                label.hide()
             for animal_slider in self.animal_sliders_list:
                 animal_slider.hide()
             for animal_label in self.animal_labels_list:
                 animal_label.hide()
+            for label in self.amp_animal_list:
+                label.hide()
             for music_label in self.music_labels_list:
                 music_label.hide()
             self.ecg_slider0.hide()
+            self.amp_ecg.hide()
             self.mode = "Uniform"
 
         if self.mode_index == 1:
@@ -641,15 +676,22 @@ class MainApp(QMainWindow, MainUI):
                 music_slider.show()
             for music_label in self.music_labels_list:
                 music_label.show()
+            for label in self.amp_music_list:
+                label.show()
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.hide()
+            for label in self.amp_uniform_list:
+                label.hide()
             for uni_label in self.uni_labels_list:
                 uni_label.hide()
             for animal_slider in self.animal_sliders_list:
                 animal_slider.hide()
             for animal_label in self.animal_labels_list:
                 animal_label.hide()
+            for label in self.amp_animal_list:
+                label.hide()
             self.ecg_slider0.hide()
+            self.amp_ecg.hide()
             self.mode = "Musical"
 
         if self.mode_index == 2:
@@ -657,25 +699,39 @@ class MainApp(QMainWindow, MainUI):
                 slider.show()
             for animal_label in self.animal_labels_list:
                 animal_label.show()
+            for label in self.amp_animal_list:
+                label.show()
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.hide()
+            for label in self.amp_uniform_list:
+                label.hide()
             for uni_label in self.uni_labels_list:
                 uni_label.hide()
             for music_slider in self.music_sliders_list:
                 music_slider.hide()
+            for label in self.amp_music_list:
+                label.hide()
             for music_label in self.music_labels_list:
                 music_label.hide()
             self.ecg_slider0.hide()
+            self.amp_ecg.hide()
             self.mode = "Animal"
 
         if self.mode_index == 3:
             self.ecg_slider0.show()
+            self.amp_ecg.show()
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.hide()
             for uni_label in self.uni_labels_list:
                 uni_label.hide()
+            for label in self.amp_uniform_list:
+                label.hide()
             for music_slider in self.music_sliders_list:
                 music_slider.hide()
+            for label in self.amp_music_list:
+                label.hide()
+            for label in self.amp_animal_list:
+                label.hide()
             for animal_slider in self.animal_sliders_list:
                 animal_slider.hide()
             for animal_label in self.animal_labels_list:
