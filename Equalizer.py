@@ -70,9 +70,17 @@ class MainApp(QMainWindow, MainUI):
         self.music_labels_list = [self.xylophone_label, self.drums_label, self.piano_label, self.flute_label]
 
         for slider in self.all_sliders_list:
+            # slider.setMinimum(0)
+            # slider.setMaximum(2)  
+            # slider.setValue(1)  
+            # slider.setMinimum(0)
+            # slider.setMaximum(20)  # Cover a range where each step represents 0.5 (0 to 20)
+            # slider.setValue(10)  
             slider.setMinimum(0)
-            slider.setMaximum(5)
-            slider.setValue(1)
+            slider.setMaximum(8)  # Multiply by 100
+            slider.setValue(4)    # Set default value to 100
+            slider.setSingleStep(1) 
+             
 
         self.amp_uniform_list = [self.amp_uni1, self.amp_uni2, self.amp_uni3, self.amp_uni4, self.amp_uni5,
                                   self.amp_uni6, self.amp_uni7, self.amp_uni8, self.amp_uni9, self.amp_uni10]
@@ -157,19 +165,16 @@ class MainApp(QMainWindow, MainUI):
         self.graphicsView_modified.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         QCoreApplication.processEvents()
         self.graphicsView_modified.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.animal_slider1.setMaximum(5)
         QCoreApplication.processEvents()
-        self.animal_slider1.setMinimum(0)
-        QCoreApplication.processEvents()
-        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl', self.animal_slider1.value(), label = self.amp_animal1))
-        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog', self.animal_slider2.value(), label = self.amp_animal2))
-        self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers', self.animal_slider3.value(), label = self.amp_animal3))
-        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary', self.animal_slider4.value(), label = self.amp_animal4))
-        self.music_slider1.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider1.value(),label = self.amp_music1))
-        self.music_slider2.valueChanged.connect(lambda: self.band_width('drums', self.music_slider2.value(), label = self.amp_music2))
-        self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value(), label = self.amp_music3))
-        self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value(), label = self.amp_music4))
-        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value(), 360, label = self.amp_ecg))
+        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl', self.animal_slider1.value()/4, label = self.amp_animal1))
+        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog', self.animal_slider2.value()/4, label = self.amp_animal2))
+        self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers', self.animal_slider3.value()/4, label = self.amp_animal3))
+        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary', self.animal_slider4.value()/4, label = self.amp_animal4))
+        self.music_slider1.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider1.value()/4,label = self.amp_music1))
+        self.music_slider2.valueChanged.connect(lambda: self.band_width('drums', self.music_slider2.value()/4, label = self.amp_music2))
+        self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value()/4, label = self.amp_music3))
+        self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value()/4, label = self.amp_music4))
+        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value()/4, 360, label = self.amp_ecg))
         QCoreApplication.processEvents()
         self.ecg_slider0.valueChanged.connect(self.arrhythima)
         self.graph_btn_play.clicked.connect(self.toggle_channel_animation)
