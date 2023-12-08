@@ -19,7 +19,7 @@ from scipy.fft import ifft
 from scipy.fftpack import fft, fftfreq
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-
+from matplotlib.widgets import RectangleSelector
 plt.style.use('ggplot')
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
@@ -43,9 +43,12 @@ class MainApp(QMainWindow, MainUI):
     def __init__(self, parent=None):
         super(MainApp, self).__init__(parent)
         QMainWindow.__init__(self)
+        self.y_min_time = None
+        self.y_max_time = None
         self.Reset = False
         self.changed_data = False
         self.Windowing = False
+        self.rs = None
         self.setupUi(self)
         self.setWindowTitle("Equalizer")
         self.uniform_sliders_list = [self.uni_slider1, self.uni_slider2, self.uni_slider3, self.uni_slider4,
@@ -132,6 +135,15 @@ class MainApp(QMainWindow, MainUI):
         self.type_data = 0
         self.Counter_file = 0
         self.path_original_data = None
+        self.selected_rectangle =None
+        self.selected = False
+        self.windows ={
+            'Hamming':self.hamming,
+            "Hanning":self.hanning,
+            "Rectagular":self.rectangular,
+            "Gaussian":self.gaussian
+
+        }
         self.ecg_slider0.hide()
         self.show_sliders()
 
@@ -166,15 +178,15 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.graphicsView_modified.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         QCoreApplication.processEvents()
-        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl', self.animal_slider1.value()/4, label = self.amp_animal1))
-        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog', self.animal_slider2.value()/4, label = self.amp_animal2))
+        self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl', self.animal_slider1.value()/4.0, label = self.amp_animal1))
+        self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog', self.animal_slider2.value()/4.0, label = self.amp_animal2))
         self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers', self.animal_slider3.value()/4, label = self.amp_animal3))
-        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary', self.animal_slider4.value()/4, label = self.amp_animal4))
-        self.music_slider1.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider1.value()/4,label = self.amp_music1))
-        self.music_slider2.valueChanged.connect(lambda: self.band_width('drums', self.music_slider2.value()/4, label = self.amp_music2))
-        self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value()/4, label = self.amp_music3))
-        self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value()/4, label = self.amp_music4))
-        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value()/4, 360, label = self.amp_ecg))
+        self.animal_slider4.valueChanged.connect(lambda: self.band_width('canary', self.animal_slider4.value()/4.0, label = self.amp_animal4))
+        self.music_slider1.valueChanged.connect(lambda: self.band_width('xylophone', self.music_slider1.value()/4.0,label = self.amp_music1))
+        self.music_slider2.valueChanged.connect(lambda: self.band_width('drums', self.music_slider2.value()/4.0, label = self.amp_music2))
+        self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value()/4.0, label = self.amp_music3))
+        self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value()/4.0, label = self.amp_music4))
+        self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value()/4.0, 360, label = self.amp_ecg))
         QCoreApplication.processEvents()
         self.ecg_slider0.valueChanged.connect(self.arrhythima)
         self.graph_btn_play.clicked.connect(self.toggle_channel_animation)
@@ -188,6 +200,7 @@ class MainApp(QMainWindow, MainUI):
         self.zoom_in_btn.clicked.connect(self.Zoom_in)
         QCoreApplication.processEvents()
         self.zoom_out_btn.clicked.connect(self.Zoom_out)
+        # self.zoom_out_btn.clicked.connect(self.selection)
         self.reset_btn.clicked.connect(self.reset)
         self.Timer = QTimer(self)
         self.graphicsView_windowing.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -217,7 +230,13 @@ class MainApp(QMainWindow, MainUI):
         self.comboBox_windowing.currentTextChanged.connect(self.check_type_window)
         self.comboBox_windowing.currentTextChanged.connect(self.on_combobox_changed)
         self.enter_window.clicked.connect(self.get_window_size)
+        self.graphicsView_windowing.setMouseTracking(True)
+        # self.graphicsView_windowing.mousePressEvent = self.selection
 
+
+        self.fig_frequecies.canvas.mpl_connect('button_press_event', self.selection)
+
+        # self.selection()
     def styles(self):
         zoom_in_icon = icon("ei.zoom-in", color='black')
         zoom_out_icon = icon("ei.zoom-out", color="black")
@@ -320,8 +339,10 @@ class MainApp(QMainWindow, MainUI):
         self.file_path, _ = QFileDialog.getOpenFileName(self, "Open Audio File", os.path.expanduser("~"),
                                                         "Audio Files (*.mp3 *.wav)")
         if self.file_path:
+
             self.delete()
             self.times_of_modified += 1
+
             self.x_fig_original = []
             self.time = []
             self.Read_signal(file_path=self.file_path)
@@ -556,6 +577,7 @@ class MainApp(QMainWindow, MainUI):
             self.scene2.addWidget(canvas)
         else:
             axes.set_ylim(min(data), max(data))
+            self.y_min_time, self.y_max_time = axes.get_ylim()
             QCoreApplication.processEvents()
             print("ALLLLO")
             self.line1, = self.ax_original.plot([], [], color='b')
@@ -573,7 +595,9 @@ class MainApp(QMainWindow, MainUI):
         label.setText(str(amp))
         data_bands = self.declaretion_mode(self.mode)
         band_width_bin = data_bands[name]
-        amp = int(amp)
+        amp = float(amp)
+        if amp == 0.0:
+            amp = 0.01
         print(f"amp:{amp}")
         print(f"band:{band_width_bin}")
         print(f"index:{name}")
@@ -646,6 +670,7 @@ class MainApp(QMainWindow, MainUI):
         if len(self.modified_signal_after_inverse) < 1 and not self.Windowing:
             print("HALLO")
             self.y_min, self.y_max = min(amplitudes), max(amplitudes)
+            self.x_min, self.x_max = min(frequencies_bin), max(frequencies_bin)
         # self.ax_frequecies.set_xlim(650, 670)
         self.ax_frequecies.set_ylim(self.y_min, self.y_max)
         self.ax_frequecies.plot(frequencies_bin, amplitudes, color='g')
@@ -762,13 +787,17 @@ class MainApp(QMainWindow, MainUI):
         self.ax_original.plot(time, self.data_original, color='g')
 
     def delete(self):
-        if self.times_of_modified > 1:
+        if self.times_of_modified >= 1:
+            print("file is deleted")
             self.ani_1.pause()
+            self.no_of_points = 1000
             self.set_audio(file_path=None, player=1)
             self.set_audio(file_path=None, player=2)
             self.graphicsView_original.scene().clear()
             self.graphicsView_windowing.scene().clear()
+            self.times_of_modified = 0
             if len(self.modified_signal_after_inverse) > 1:
+                self.modified_signal_after_inverse = []
                 self.ani_2.pause()
                 self.graphicsView_modified.scene().clear()
 
@@ -844,7 +873,7 @@ class MainApp(QMainWindow, MainUI):
             if x_min >= self.time[3] and x_max <= self.time[self.specific_row]:
                 self.ax_original.set_xlim(self.ax_original.get_xlim() + self.oldxy[0] - x)
                 self.ax_modified.set_xlim(self.ax_original.get_xlim() + self.oldxy[0] - x)  # set new axes limits
-            if y_min >= -1 and y_max <= 1:
+            if y_min >= self.y_min_time and y_max <= self.y_max_time:
                 self.ax_original.set_ylim(self.ax_original.get_ylim() + self.oldxy[1] - y)
                 # set new axes limits
                 self.ax_modified.set_ylim(self.ax_original.get_ylim() + self.oldxy[1] - y)
@@ -879,7 +908,7 @@ class MainApp(QMainWindow, MainUI):
     def reset(self):
         self.Reset = True
         self.changed_data = True
-        self.times_of_modified = 0
+        # self.times_of_modified = 0
         if len(self.modified_signal_after_inverse) > 1:
             self.ani_2.pause()
             self.graphicsView_modified.scene().clear()
@@ -888,6 +917,55 @@ class MainApp(QMainWindow, MainUI):
         self.set_audio(file_path=self.path_original_data, player=1)
         self.Read_signal(self.path_original_data)
         # audio_progress.setValue(0)
+
+
+
+    def draw_rectangular_selection(self,eclick,erelease):
+        # if self.selected:
+        #     self.selected_rectangle.remove()
+        #     self.selected = False
+        #
+        #
+        # x1, y1 = eclick.xdata, eclick.ydata
+        # x2, y2 = erelease.xdata, erelease.ydata
+        # self.selected_rectangle = plt.Rectangle(
+        #     (min(x1, x2), min(y1, y2)),
+        #     np.abs(x1 - x2),
+        #     np.abs(y1 - y2),
+        #     color='r',
+        #     fill=False
+        # )
+        # self.ax_frequecies.add_patch(self.selected_rectangle)
+        extent = self.rs.extents
+        self.ax_frequecies.set_xlim(extent[0], extent[1])
+        self.selected = True
+
+
+    def selection(self,event):
+        if self.rs is None:
+            # Create RectangleSelector if it doesn't exist
+            self.rs = RectangleSelector(
+                self.ax_frequecies,
+                self.draw_rectangular_selection,
+                button=[1],
+                interactive=True,
+            )
+            print("RectangleSelector created")
+        else:
+            print("RectangleSelector already exists")
+
+        self.fig_frequecies.canvas.draw()
+
+        # self.draw_rectangular_selection()
+
+
+        print(self.rs)
+
+
+
+
+
+
 
     def check_type_window(self):
         window_name = self.comboBox_windowing.currentText()
@@ -899,17 +977,36 @@ class MainApp(QMainWindow, MainUI):
         else:
             return len(self.data_original), self.data_original
 
+    def hamming(self,window_size):
+        window = np.hamming(window_size)
+        return window
+    def hanning(self,window_size):
+        window = np.hanning(window_size)
+        return window
+    def rectangular(self,window_size):
+        window = np.ones(window_size)
+        return window
+    def gaussian(self,window_size,sigma):
+        window = signal.windows.gaussian(window_size, std=sigma)
+        return window
+
+
+
+
     def windowing(self, window_name, window_size, sigma=0.1):
         self.Windowing = True
         self.changed_data = True
-        if window_name == "Hamming":
-            window = np.hamming(window_size)
-        if window_name == "Hanning":
-            window = np.hanning(window_size)
-        if window_name == "Rectagular":
-            window = np.ones(window_size)
         if window_name == "Gaussian":
-            window = signal.windows.gaussian(window_size, std=sigma)
+            window = self.windows[window_name](window_size,sigma)
+        else:
+            window = self.windows[window_name](window_size)
+        # if window_name == "Hamming":
+        #     window = np.hamming(window_size)
+        # if window_name == "Hanning":
+        #     window = np.hanning(window_size)
+        # if window_name == "Rectagular":
+        #     window = np.ones(window_size)
+
 
         print("arrived1")
         data_band = self.declaretion_mode("Animal")
