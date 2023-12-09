@@ -191,7 +191,6 @@ class MainApp(QMainWindow, MainUI):
         }
         self.ecg_slider0.hide()
         self.show_sliders()
-
         self.no_of_points = 1000
         self.media_player = QMediaPlayer()
         self.media_player_modified_signal = QMediaPlayer()
@@ -277,8 +276,6 @@ class MainApp(QMainWindow, MainUI):
         self.enter_window.clicked.connect(self.get_window_size)
         self.graphicsView_windowing.setMouseTracking(True)
         # self.graphicsView_windowing.mousePressEvent = self.selection
-
-
         self.fig_frequecies.canvas.mpl_connect('button_press_event', self.selection)
 
         # self.selection()
@@ -295,6 +292,8 @@ class MainApp(QMainWindow, MainUI):
         self.pan_btn.setIcon(pan_icon)
         reset_icon = icon("msc.debug-restart", color="black")
         self.reset_btn.setIcon(reset_icon)
+        back_icon = icon('ri.arrow-go-back-fill', color="black")
+        self.zoom_out_btn2.setIcon(back_icon)
         self.length_input.hide()
         self.length_label.hide()
         self.std_label.hide()
@@ -406,15 +405,11 @@ class MainApp(QMainWindow, MainUI):
 
         # Write the modified signal to the new file
         try:
-            # wavfile.write(file_path,self.sampling_rate,modified_signal.astype("int16"))
-            # print("The Data is stored")
             with sf.SoundFile(file_path, 'w', format='wav', samplerate=self.sampling_rate, channels=1) as file:
                 # Write the modified signal to the file
                 file.write(modified_signal)
                 print("The Data is stored")
-
         # Code that may cause the issue
-
         except Exception as e:
             print(f"Error: {e}")
         print("Modified file written to:", file_path)
@@ -671,22 +666,11 @@ class MainApp(QMainWindow, MainUI):
         else:
             return modified_amp
 
-
-
-
-
-
-
     def assign_amp(self,amp,mode):
         if amp < 1.0:
             self.amps_down[mode].append(amp)
         else:
             self.amps_up[mode].append(amp)
-
-
-
-
-
 
     def Modify_frequency(self, band_width, modified_amp, fs=44100):
         print(f"amp:{modified_amp}")
@@ -1004,8 +988,6 @@ class MainApp(QMainWindow, MainUI):
         self.Read_signal(self.path_original_data)
         # audio_progress.setValue(0)
 
-
-
     def draw_rectangular_selection(self,eclick,erelease):
         # if self.selected:
         #     self.selected_rectangle.remove()
@@ -1043,15 +1025,7 @@ class MainApp(QMainWindow, MainUI):
         self.fig_frequecies.canvas.draw()
 
         # self.draw_rectangular_selection()
-
-
         print(self.rs)
-
-
-
-
-
-
 
     def check_type_window(self):
         window_name = self.comboBox_windowing.currentText()
@@ -1075,9 +1049,6 @@ class MainApp(QMainWindow, MainUI):
     def gaussian(self,window_size,sigma):
         window = signal.windows.gaussian(window_size, std=sigma)
         return window
-
-
-
 
     def windowing(self, window_name, window_size, sigma=0.1):
         self.Windowing = True
@@ -1167,18 +1138,12 @@ class MainApp(QMainWindow, MainUI):
                 data_pos_after_convolution .append(self.convolution(data_pos,window_transform))
                 data_negv_after_convolution.append(self.convolution(data_negv, window_transform))
 
-
-
-
-
             # data_remind_pos.append(data_pos[window_size:])
             # data_remind_negv.append(data_negv[window_size:])
         print(f"conv:{data_pos_after_convolution}")
         data_after_convolution = np.concatenate([np.concatenate(data_pos_after_convolution),
                                                  np.concatenate(data_negv_after_convolution)
                                                  ])
-
-
 
         return data_after_convolution
 
@@ -1214,11 +1179,6 @@ class MainApp(QMainWindow, MainUI):
         result = signal.convolve(data_signal,np.concatenate([data_window,data_window]))
         N = len(data_signal)
         return result[N:2*N] / N
-
-
-
-
-
 
 def main():
     app = QApplication(sys.argv)
