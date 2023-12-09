@@ -43,11 +43,56 @@ class MainApp(QMainWindow, MainUI):
     def __init__(self, parent=None):
         super(MainApp, self).__init__(parent)
         QMainWindow.__init__(self)
+        self.first_adjusted = False
         self.y_min_time = None
         self.y_max_time = None
         self.Reset = False
         self.changed_data = False
         self.Windowing = False
+        self.amps_down = {}
+        self.amps_up = {}
+        self.amps_up = {
+            "owl": [],
+            "frog": [],
+            "canary": [],
+            "grasshoppers": [],
+            "xylophone": [],
+            "drums": [],
+            "piano": [],
+            'flute': [],
+            '1': [],
+            '2': [],
+            '3': [],
+            '4': [],
+            '5': [],
+            '6': [],
+            '7': [],
+            '8': [],
+            '9': [],
+            '10': []
+
+        }
+        self.amps_down = {
+            "owl": [],
+            "frog": [],
+            "canary": [],
+            "grasshoppers": [],
+            "xylophone": [],
+            "drums": [],
+            "piano": [],
+            'flute': [],
+            '1': [],
+            '2': [],
+            '3': [],
+            '4': [],
+            '5': [],
+            '6': [],
+            '7': [],
+            '8': [],
+            '9': [],
+            '10': []
+
+        }
         self.rs = None
         self.setupUi(self)
         self.setWindowTitle("Equalizer")
@@ -450,6 +495,7 @@ class MainApp(QMainWindow, MainUI):
                 "canary": np.array([3000, 5500, -3000, -5500]),
                 "grasshoppers": np.array([6000, 30000, -6000, -30000])
             }
+
             return animal_dict
 
         if mode_name == 'Uniform':
@@ -598,10 +644,49 @@ class MainApp(QMainWindow, MainUI):
         amp = float(amp)
         if amp == 0.0:
             amp = 0.01
+        modified_amp = self.adjust_sliders(amp, name)
+        self.assign_amp(amp, name)
+
         print(f"amp:{amp}")
         print(f"band:{band_width_bin}")
         print(f"index:{name}")
-        self.Modify_frequency(band_width_bin, amp, fs)
+        self.Modify_frequency(band_width_bin, modified_amp, fs)
+
+    def adjust_sliders(self,modified_amp,mode):
+        amp = 1
+        if len(self.amps_down[mode]) > 0:
+            for item in self.amps_down[mode]:
+                print(f"before amp:{item}")
+                amp *= 1.0/ item
+                print(f"amppp:{amp}")
+                print(f"amp2:{float(amp * modified_amp)}")
+            self.amps_down[mode] = []
+            return float(amp * modified_amp)
+        elif  len(self.amps_up[mode]) >  0:
+            for item in self.amps_up[mode]:
+                amp *= 1.0/ item
+            self.amps_up[mode] = []
+
+            return float(amp * modified_amp)
+        else:
+            return modified_amp
+
+
+
+
+
+
+
+    def assign_amp(self,amp,mode):
+        if amp < 1.0:
+            self.amps_down[mode].append(amp)
+        else:
+            self.amps_up[mode].append(amp)
+
+
+
+
+
 
     def Modify_frequency(self, band_width, modified_amp, fs=44100):
         print(f"amp:{modified_amp}")
@@ -610,6 +695,7 @@ class MainApp(QMainWindow, MainUI):
         if len(self.modified_signal_after_inverse) > 1:
             data = self.modified_signal_after_inverse
         else:
+
             data = self.data_original
 
         frequencies, amplitudes, modified_signal_list = self.Fourier_Transform(data, fs)
