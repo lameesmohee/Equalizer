@@ -164,11 +164,15 @@ class MainApp(QMainWindow, MainUI):
         for label in self.all_amp_list:
             label.setStyleSheet("background-color: transparent;")
 
+        self.audio_player_components = [self.original_audio_label, self.original_frame, self.play_pause_audio_button,
+                                         self.audio_progress, self.modified_audio_label, self.modified_frame,
+                                         self.audio_progress_2, self.play_pause_audio_button_2]
+
         self.mode_index = 0
         # self.figures[0] = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
         # self.figures[1] = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
-        self.fig_spectrogram_original = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
-        self.fig_spectrogram_modified = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
+        # self.fig_spectrogram_original = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
+        # self.fig_spectrogram_modified = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
         # self.axes[0] = self.figures[0].add_subplot(111)
         # self.axes[1] = self.figures[1].add_subplot(111)
         # self.fig_frequecies = plt.figure(figsize=(650 / 80, 450 / 80), dpi=80)
@@ -277,6 +281,14 @@ class MainApp(QMainWindow, MainUI):
         QCoreApplication.processEvents()
         self.graphicsView_modified.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         QCoreApplication.processEvents()
+        self.graphicsView_Spectro_original.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        QCoreApplication.processEvents()
+        self.graphicsView_Spectro_original.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        QCoreApplication.processEvents()
+        self.graphicsView_spectro_modified.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        QCoreApplication.processEvents()
+        self.graphicsView_spectro_modified.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        QCoreApplication.processEvents()
         self.animal_slider1.valueChanged.connect(lambda: self.band_width('owl', self.animal_slider1.value()/4.0, label = self.amp_animal1))
         self.animal_slider2.valueChanged.connect(lambda: self.band_width('frog', self.animal_slider2.value()/4.0, label = self.amp_animal2))
         self.animal_slider3.valueChanged.connect(lambda: self.band_width('grasshoppers', self.animal_slider3.value()/4, label = self.amp_animal3))
@@ -286,6 +298,7 @@ class MainApp(QMainWindow, MainUI):
         self.music_slider3.valueChanged.connect(lambda: self.band_width('piano', self.music_slider3.value()/4.0, label = self.amp_music3))
         self.music_slider4.valueChanged.connect(lambda: self.band_width('flute', self.music_slider4.value()/4.0, label = self.amp_music4))
         self.ecg_slider0.valueChanged.connect(lambda: self.band_width('ecg', self.ecg_slider0.value()/4.0, label = self.amp_ecg,fs=360))
+
         QCoreApplication.processEvents()
         self.ecg_slider0.valueChanged.connect(self.arrhythima)
         self.graph_btn_play.clicked.connect(self.toggle_channel_animation)
@@ -306,7 +319,7 @@ class MainApp(QMainWindow, MainUI):
         self.graphicsView_windowing.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         QCoreApplication.processEvents()
         self.graphicsView_windowing.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.check_spectro.stateChanged.connect(self.check_spectro_state_changed)
+        # self.check_spectro.stateChanged.connect(self.check_spectro_state_changed)
         self.uni_slider1.valueChanged.connect(lambda: self.band_width('1', self.uni_slider1.value()/4.0, label = self.amp_uni1))
         QCoreApplication.processEvents()
         self.uni_slider2.valueChanged.connect(lambda: self.band_width('2', self.uni_slider2.value()/4.0, label = self.amp_uni2))
@@ -350,8 +363,7 @@ class MainApp(QMainWindow, MainUI):
         self.reset_btn.setIcon(reset_icon)
         back_icon = icon('ri.arrow-go-back-fill', color="black")
         self.backward.setIcon(back_icon)
-        self.length_input.hide()
-        self.length_label.hide()
+        
         self.std_label.hide()
         self.std_input.hide()
         self.enter_window.hide()
@@ -372,18 +384,6 @@ class MainApp(QMainWindow, MainUI):
                 self.std_input.hide()
                 self.windowing(current_window)
 
-
-
-
-
-
-
-
-
-
-
-
-
     def get_window_size(self):
         current_window = self.check_type_window()
         print(len(self.std_input.text()))
@@ -395,9 +395,6 @@ class MainApp(QMainWindow, MainUI):
         print(f"std:{std}")
 
         self.windowing(current_window, std)
-
-
-
 
     def play_pause_audio(self, button_name):
         # Toggling the Play and Pause for the audio
@@ -449,16 +446,17 @@ class MainApp(QMainWindow, MainUI):
 
     def create_figures(self):
         for __ in range(0,3):
-            figure = Figure(figsize=(650 / 80, 450 / 80), dpi=80)
+            figure = Figure(figsize=(650 / 80, 250 / 80), dpi=80)
             ax = figure.add_subplot(111)
             self.figures.append(figure)
             self.axes.append(ax)
+        self.figures[2] = Figure(figsize=(480 / 80, 300 / 80), dpi=80)
+        ax = self.figures[2].add_subplot(111)
+        self.axes[2] = ax
     def create_scene(self):
         for __ in range (0,3):
             scene = QtWidgets.QGraphicsScene()
             self.scenes.append(scene)
-
-
 
     def add_audio(self):
         # Reading the audio
@@ -515,6 +513,7 @@ class MainApp(QMainWindow, MainUI):
         end_time = librosa.get_duration(y=data, sr=self.sampling_rate)
         self.time = np.linspace(0,end_time,len(data))
         print(f"end_time:{end_time}")
+        self.plot_spectrogram(data, self.sampling_rate)
         if self.play_animation:
             if len(self.modified_signal_after_inverse) > 1:
                 print(f"fileeeeeeeee:{file_path}")
@@ -561,7 +560,6 @@ class MainApp(QMainWindow, MainUI):
             self.axes[2].clear()
             self.changed_data = False
 
-
         frequencies_bin, amplitudes, signal = self.Fourier_Transform(signal, sr)
         # frequencies_hz = (frequencies_bin * self.sampling_rate) / 124416
         # frequencies_hz = (frequencies_bin * self.sampling_rate) / 903723
@@ -580,21 +578,9 @@ class MainApp(QMainWindow, MainUI):
         # # self.ax_frequecies.set_xlim(-5, 5) # ecg
         # self.ax_frequecies.plot(frequencies_bin, amplitudes, color='g')
         return
-    def check_spectro_state_changed(self, state):
-        if state == 2:  # 2 corresponds to checked state
-            self.plot_spectrogram(self.data_original, self.sampling_rate)
-            print("lllllllllll")
-        else:
-            print("pppppp")
-            self.graphs[0].scene().clear()
-            self.graphs[0].setScene(self.scenes[0])
-
-            if len(self.modified_signal_after_inverse) > 1:
-                self.fig_spectrogram_modified.clf()
-                self.graphs[1].setScene(self.scenes[1])
 
     def plot_spectrogram(self, original_audio, sampling_rate):
-        self.fig_spectrogram_original = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
+        self.fig_spectrogram_original = plt.figure(figsize=(500 / 80, 250 / 80), dpi=80)
         f, t, Sxx = signal.spectrogram(original_audio, sampling_rate, scaling='spectrum')
         plt.pcolormesh(t, f, np.log10(Sxx))
         plt.ylabel('f [Hz]')
@@ -602,12 +588,12 @@ class MainApp(QMainWindow, MainUI):
         print(f"before scene:{self.graphicsView_original.scene()}")
         scene5 = QtWidgets.QGraphicsScene(self)
         canvas_3 = FigureCanvasQTAgg(self.fig_spectrogram_original)
-        self.graphicsView_original.setScene(scene5)
-        print(f"After scene:{self.graphicsView_original.scene()}")
+        self.graphicsView_Spectro_original.setScene(scene5)
+        print(f"After scene:{self.graphicsView_Spectro_original.scene()}")
         scene5.addWidget(canvas_3)
         if len(self.modified_signal_after_inverse) > 1:
             print("kkkk")
-            self.fig_spectrogram_modified = plt.figure(figsize=(630 / 80, 350 / 80), dpi=80)
+            self.fig_spectrogram_modified = plt.figure(figsize=(500 / 80, 250 / 80), dpi=80)
             f_modified, t_modified, Sxx_modified = signal.spectrogram(self.modified_signal_after_inverse, sampling_rate,
                                                                       scaling='spectrum')
             plt.pcolormesh(t_modified, f_modified, np.log10(Sxx_modified))
@@ -615,7 +601,7 @@ class MainApp(QMainWindow, MainUI):
             plt.xlabel('t [sec]')
             scene2 = QtWidgets.QGraphicsScene(self)
             canvas_4 = FigureCanvasQTAgg(self.fig_spectrogram_modified)
-            self.graphicsView_modified.setScene(scene2)
+            self.graphicsView_spectro_modified.setScene(scene2)
             scene2.addWidget(canvas_4)
 
     def declaretion_mode(self, mode_name):
@@ -870,7 +856,6 @@ class MainApp(QMainWindow, MainUI):
         return
 
 
-
     def show_sliders(self): ## comment
         self.mode_index = self.mode_options.currentIndex()
         if self.mode_index == 0:
@@ -891,9 +876,10 @@ class MainApp(QMainWindow, MainUI):
             for label in self.amp_animal_list:
                 label.hide()
             for music_label in self.music_labels_list:
-
                 music_label.hide()
             self.ecg_slider0.hide()
+            for component in self.audio_player_components:
+                component.show()
 
             self.amp_ecg.hide()
             self.mode = 3
@@ -919,6 +905,8 @@ class MainApp(QMainWindow, MainUI):
                 label.hide()
             self.ecg_slider0.hide()
             self.amp_ecg.hide()
+            for component in self.audio_player_components:
+                component.show()
             self.mode = 1
 
         if self.mode_index == 2:
@@ -942,11 +930,15 @@ class MainApp(QMainWindow, MainUI):
                 music_label.hide()
             self.ecg_slider0.hide()
             self.amp_ecg.hide()
+            for component in self.audio_player_components:
+                component.show()
             self.mode = 0
 
         if self.mode_index == 3:
             self.ecg_slider0.show()
             self.amp_ecg.show()
+            for component in self.audio_player_components:
+                component.hide()
             for uni_slider in self.uniform_sliders_list:
                 uni_slider.hide()
             for uni_label in self.uni_labels_list:
@@ -1013,10 +1005,7 @@ class MainApp(QMainWindow, MainUI):
             print("file is deleted")
             if not self.ecg_mode:
                 self.ani_1.pause()
-            if self.changed_data:
-                self.length_input.hide()
-                self.length_label.hide()
-                self.enter_window.hide()
+            
 
             self.no_of_points = 1000
             self.uesd_window = False

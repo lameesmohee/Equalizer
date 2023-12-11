@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1838</width>
+    <width>1330</width>
     <height>948</height>
    </rect>
   </property>
@@ -25,25 +25,19 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QFrame" name="frame_4">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QFrame" name="frame">
         <property name="minimumSize">
          <size>
-          <width>600</width>
-          <height>400</height>
+          <width>451</width>
+          <height>321</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>600</width>
-          <height>400</height>
+          <width>451</width>
+          <height>321</height>
          </size>
         </property>
         <property name="frameShape">
@@ -55,8 +49,8 @@
         <widget class="QLabel" name="label">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>10</y>
+           <x>10</x>
+           <y>80</y>
            <width>181</width>
            <height>21</height>
           </rect>
@@ -74,8 +68,8 @@
         <widget class="QComboBox" name="mode_options">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>40</y>
+           <x>10</x>
+           <y>110</y>
            <width>201</width>
            <height>31</height>
           </rect>
@@ -130,8 +124,8 @@ QComboBox::down-arrow {
         <widget class="QLabel" name="label_2">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>100</y>
+           <x>10</x>
+           <y>170</y>
            <width>181</width>
            <height>31</height>
           </rect>
@@ -148,8 +142,8 @@ QComboBox::down-arrow {
         <widget class="QComboBox" name="comboBox_windowing">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>130</y>
+           <x>10</x>
+           <y>200</y>
            <width>201</width>
            <height>31</height>
           </rect>
@@ -212,11 +206,11 @@ QComboBox::down-arrow {
           </property>
          </item>
         </widget>
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="original_audio_label">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>230</y>
+           <x>0</x>
+           <y>0</y>
            <width>181</width>
            <height>31</height>
           </rect>
@@ -233,14 +227,14 @@ QComboBox::down-arrow {
         <widget class="QFrame" name="original_frame">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>260</y>
-           <width>371</width>
+           <x>0</x>
+           <y>30</y>
+           <width>441</width>
            <height>41</height>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#cccccc;
+          <string notr="true">background-color:white;
 border-radius:15px</string>
          </property>
          <property name="frameShape">
@@ -259,7 +253,7 @@ border-radius:15px</string>
            </rect>
           </property>
           <property name="styleSheet">
-           <string notr="true">color:black;
+           <string notr="true">color:green;
 </string>
           </property>
           <property name="text">
@@ -274,7 +268,7 @@ border-radius:15px</string>
            <rect>
             <x>50</x>
             <y>10</y>
-            <width>301</width>
+            <width>371</width>
             <height>21</height>
            </rect>
           </property>
@@ -285,16 +279,16 @@ border-radius:15px</string>
                         }
 
                        QSlider::handle:horizontal {
-                             background: #eb583b;
+                             background: black;
                              width: 10px;
                             margin: -5px -1px ;
                             border-radius: 5px;
-                            border: 1px solid #2a2a2a;} 
+                            border: 1px solid black;} 
 QSlider::add-page:horizontal{
         background: qlineargradient(x1:0, y1:0, x2:0, stop:0 #B1B1B1, stop:1 #c4c4c4;)
 }
 QSlider::sub-page:horizontal{
-        background: #eb583b;
+        background: black;
 }
 QSlider::handle:horizontal:hover {
                              background: #007ad9;
@@ -307,11 +301,96 @@ QSlider::handle:horizontal:hover {
           </property>
          </widget>
         </widget>
-        <widget class="QLabel" name="label_4">
+        <widget class="QComboBox" name="comboBox_windowing_2">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>320</y>
+           <x>240</x>
+           <y>110</y>
+           <width>201</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">/* General style for all QComboBox */
+QComboBox {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding-left: 10px;
+}
+
+/* Style for the drop-down area */
+QComboBox::drop-down {
+    border: 0px;
+}
+
+/* Style for the drop-down arrow */
+QComboBox::down-arrow {
+    image: url(C:/Users/delta/OneDrive/Desktop/sampling/.idea/25623.png);
+    width: 12px;
+    height: 12px;
+    margin-right: 15px;
+}</string>
+         </property>
+         <property name="editable">
+          <bool>false</bool>
+         </property>
+         <property name="currentText">
+          <string>Ventricular Trigeminy</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Ventricular Trigeminy</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Rectagular</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hanning</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Hamming</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Gaussian</string>
+          </property>
+         </item>
+        </widget>
+        <widget class="QLabel" name="label_3">
+         <property name="geometry">
+          <rect>
+           <x>240</x>
+           <y>80</y>
+           <width>181</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Arrhythmia Type</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="modified_audio_label">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>250</y>
            <width>181</width>
            <height>31</height>
           </rect>
@@ -325,18 +404,20 @@ QSlider::handle:horizontal:hover {
           <string>Modified Audio</string>
          </property>
         </widget>
-        <widget class="QFrame" name="frame_6">
+        <widget class="QFrame" name="modified_frame">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>350</y>
-           <width>371</width>
+           <x>0</x>
+           <y>280</y>
+           <width>441</width>
            <height>41</height>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#cccccc;
-border-radius:15px</string>
+          <string notr="true">border:1px ;
+background-color:white;
+border-radius:15px;
+</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -349,7 +430,7 @@ border-radius:15px</string>
            <rect>
             <x>50</x>
             <y>10</y>
-            <width>301</width>
+            <width>381</width>
             <height>21</height>
            </rect>
           </property>
@@ -360,7 +441,7 @@ border-radius:15px</string>
                         }
 
                        QSlider::handle:horizontal {
-                             background: #eb583b;
+                             background: black;
                              width: 10px;
                             margin: -5px -1px ;
                             border-radius: 5px;
@@ -369,7 +450,7 @@ QSlider::add-page:horizontal{
         background: qlineargradient(x1:0, y1:0, x2:0, stop:0 #B1B1B1, stop:1 #c4c4c4;)
 }
 QSlider::sub-page:horizontal{
-        background: #eb583b;
+        background: black;
 }
 QSlider::handle:horizontal:hover {
                              background: #007ad9;
@@ -391,7 +472,7 @@ QSlider::handle:horizontal:hover {
            </rect>
           </property>
           <property name="styleSheet">
-           <string notr="true">color:black;
+           <string notr="true">color:green;
 </string>
           </property>
           <property name="text">
@@ -402,12 +483,12 @@ QSlider::handle:horizontal:hover {
           </property>
          </widget>
         </widget>
-        <widget class="QCheckBox" name="check_spectro">
+        <widget class="QLabel" name="std_label">
          <property name="geometry">
           <rect>
-           <x>90</x>
-           <y>180</y>
-           <width>151</width>
+           <x>220</x>
+           <y>170</y>
+           <width>91</width>
            <height>31</height>
           </rect>
          </property>
@@ -417,14 +498,14 @@ QSlider::handle:horizontal:hover {
           </font>
          </property>
          <property name="text">
-          <string>Spectrogram</string>
+          <string>Std. Dev.</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="length_input">
+        <widget class="QLineEdit" name="std_input">
          <property name="geometry">
           <rect>
-           <x>310</x>
-           <y>130</y>
+           <x>220</x>
+           <y>200</y>
            <width>71</width>
            <height>31</height>
           </rect>
@@ -442,29 +523,11 @@ QLineEdit:focus{
 border-bottom: 2px solid black;}</string>
          </property>
         </widget>
-        <widget class="QLabel" name="length_label">
-         <property name="geometry">
-          <rect>
-           <x>310</x>
-           <y>105</y>
-           <width>81</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Length</string>
-         </property>
-        </widget>
         <widget class="QPushButton" name="enter_window">
          <property name="geometry">
           <rect>
-           <x>500</x>
-           <y>130</y>
+           <x>320</x>
+           <y>200</y>
            <width>71</width>
            <height>31</height>
           </rect>
@@ -495,60 +558,20 @@ background-color: #a0a2a4;
           <string>Enter</string>
          </property>
         </widget>
-        <widget class="QLabel" name="std_label">
-         <property name="geometry">
-          <rect>
-           <x>400</x>
-           <y>100</y>
-           <width>91</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Std. Dev.</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="std_input">
-         <property name="geometry">
-          <rect>
-           <x>400</x>
-           <y>130</y>
-           <width>71</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QLineEdit{
-border: none;
-border-bottom: 2px solid #cccccc;}
-QLineEdit:focus{
-border-bottom: 2px solid black;}</string>
-         </property>
-        </widget>
        </widget>
       </item>
       <item>
        <widget class="QFrame" name="frame_sliders">
         <property name="minimumSize">
          <size>
-          <width>981</width>
-          <height>400</height>
+          <width>850</width>
+          <height>300</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>1000</width>
-          <height>400</height>
+          <width>800</width>
+          <height>300</height>
          </size>
         </property>
         <property name="styleSheet">
@@ -589,10 +612,10 @@ QSlider::handle:vertical:hover {
         <widget class="QSlider" name="uni_slider1">
          <property name="geometry">
           <rect>
-           <x>150</x>
-           <y>29</y>
+           <x>70</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -602,7 +625,36 @@ QSlider::handle:vertical:hover {
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -611,10 +663,10 @@ QSlider::handle:vertical:hover {
         <widget class="QSlider" name="uni_slider2">
          <property name="geometry">
           <rect>
-           <x>230</x>
-           <y>29</y>
+           <x>150</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -622,6 +674,38 @@ QSlider::handle:vertical:hover {
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -630,10 +714,10 @@ QSlider::handle:vertical:hover {
         <widget class="QSlider" name="uni_slider3">
          <property name="geometry">
           <rect>
-           <x>310</x>
-           <y>29</y>
+           <x>230</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -643,18 +727,36 @@ QSlider::handle:vertical:hover {
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">QSlider::groove:horizontal {
-border: 1px solid;
-height: 10px;
-margin: 0px;
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
 }
-QSlider::handle:horizontal {
-background-color: black;
-border: 1px solid;
-height: 40px;
-width: 40px;
-margin: -15px 0px;
-}</string>
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -663,10 +765,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="uni_slider6">
          <property name="geometry">
           <rect>
-           <x>550</x>
-           <y>29</y>
+           <x>470</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -674,6 +776,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -682,10 +816,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="uni_slider5">
          <property name="geometry">
           <rect>
-           <x>470</x>
-           <y>29</y>
+           <x>390</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -693,6 +827,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -701,10 +867,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="uni_slider4">
          <property name="geometry">
           <rect>
-           <x>390</x>
-           <y>29</y>
+           <x>310</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -712,6 +878,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -720,10 +918,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="uni_slider9">
          <property name="geometry">
           <rect>
-           <x>790</x>
-           <y>29</y>
+           <x>710</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -731,6 +929,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -739,10 +969,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="uni_slider8">
          <property name="geometry">
           <rect>
-           <x>710</x>
-           <y>29</y>
+           <x>630</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -750,6 +980,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -758,10 +1020,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="uni_slider7">
          <property name="geometry">
           <rect>
-           <x>630</x>
-           <y>29</y>
+           <x>550</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -769,6 +1031,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -777,10 +1071,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="uni_slider10">
          <property name="geometry">
           <rect>
-           <x>870</x>
-           <y>29</y>
+           <x>790</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -788,6 +1082,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -796,10 +1122,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="music_slider1">
          <property name="geometry">
           <rect>
-           <x>270</x>
-           <y>29</y>
+           <x>190</x>
+           <y>39</y>
            <width>20</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -807,6 +1133,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -815,10 +1173,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="music_slider2">
          <property name="geometry">
           <rect>
-           <x>430</x>
-           <y>29</y>
+           <x>350</x>
+           <y>39</y>
            <width>20</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -826,6 +1184,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -834,10 +1224,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="music_slider3">
          <property name="geometry">
           <rect>
-           <x>590</x>
-           <y>29</y>
+           <x>510</x>
+           <y>39</y>
            <width>20</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -845,6 +1235,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -853,10 +1275,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="music_slider4">
          <property name="geometry">
           <rect>
-           <x>750</x>
-           <y>29</y>
+           <x>670</x>
+           <y>39</y>
            <width>20</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -864,6 +1286,38 @@ margin: -15px 0px;
            <width>16777215</width>
            <height>300</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -872,10 +1326,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="animal_slider1">
          <property name="geometry">
           <rect>
-           <x>250</x>
-           <y>29</y>
+           <x>170</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -885,7 +1339,36 @@ margin: -15px 0px;
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -894,10 +1377,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="animal_slider2">
          <property name="geometry">
           <rect>
-           <x>410</x>
-           <y>29</y>
+           <x>330</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -907,7 +1390,36 @@ margin: -15px 0px;
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -916,10 +1428,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="animal_slider3">
          <property name="geometry">
           <rect>
-           <x>570</x>
-           <y>29</y>
+           <x>490</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -929,7 +1441,36 @@ margin: -15px 0px;
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -938,10 +1479,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="animal_slider4">
          <property name="geometry">
           <rect>
-           <x>730</x>
-           <y>29</y>
+           <x>650</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -951,7 +1492,36 @@ margin: -15px 0px;
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -960,10 +1530,10 @@ margin: -15px 0px;
         <widget class="QSlider" name="ecg_slider0">
          <property name="geometry">
           <rect>
-           <x>510</x>
-           <y>29</y>
+           <x>430</x>
+           <y>39</y>
            <width>21</width>
-           <height>291</height>
+           <height>181</height>
           </rect>
          </property>
          <property name="maximumSize">
@@ -972,6 +1542,38 @@ margin: -15px 0px;
            <height>300</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QSlider::handle:vertical {
+    /* background: #eb583b;*/
+    /* background:#9c1616;*/
+    background:#ab1818;
+    height: 15px; /* Use height instead of width for vertical slider */
+    margin: -1px -8px; /* Adjust margins for vertical alignment */
+    border-radius: 7px;
+    border: 0px solid #2a2a2a;
+    width: 10px; /* Adjust width of handle for vertical slider */
+}
+
+QSlider::add-page:vertical {
+    /* background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #e3ac76, stop:1 #e3ac76); */
+    /* background:rgba(76, 175, 80, 0.3); */
+    /* This color will appear on the top side of the slider */
+    background: #ab1818; /* Adjust color for the top side of the slider */
+}
+
+QSlider::sub-page:vertical {
+    /* background: #eb583b; */ /* Adjust gradient direction for vertical slider */
+    /* background: #9c1616; *//*red-dark*/
+   background: none;
+    /* This color will appear on the bottom side of the slider */
+}
+
+QSlider::handle:vertical:hover {
+    background: red;
+    border-color: red;
+}
+</string>
+         </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -979,8 +1581,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq1">
          <property name="geometry">
           <rect>
-           <x>130</x>
-           <y>330</y>
+           <x>50</x>
+           <y>230</y>
            <width>81</width>
            <height>20</height>
           </rect>
@@ -1012,8 +1614,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq2">
          <property name="geometry">
           <rect>
-           <x>220</x>
-           <y>330</y>
+           <x>140</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1045,8 +1647,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq3">
          <property name="geometry">
           <rect>
-           <x>300</x>
-           <y>330</y>
+           <x>220</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1078,8 +1680,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq4">
          <property name="geometry">
           <rect>
-           <x>380</x>
-           <y>330</y>
+           <x>300</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1111,8 +1713,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq5">
          <property name="geometry">
           <rect>
-           <x>460</x>
-           <y>330</y>
+           <x>380</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1144,8 +1746,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq6">
          <property name="geometry">
           <rect>
-           <x>540</x>
-           <y>330</y>
+           <x>460</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1177,8 +1779,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq7">
          <property name="geometry">
           <rect>
-           <x>620</x>
-           <y>330</y>
+           <x>540</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1210,8 +1812,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq8">
          <property name="geometry">
           <rect>
-           <x>700</x>
-           <y>330</y>
+           <x>620</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1243,8 +1845,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq9">
          <property name="geometry">
           <rect>
-           <x>780</x>
-           <y>330</y>
+           <x>700</x>
+           <y>230</y>
            <width>71</width>
            <height>20</height>
           </rect>
@@ -1276,8 +1878,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="uni_freq10">
          <property name="geometry">
           <rect>
-           <x>860</x>
-           <y>330</y>
+           <x>780</x>
+           <y>230</y>
            <width>81</width>
            <height>20</height>
           </rect>
@@ -1309,8 +1911,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="owl_label">
          <property name="geometry">
           <rect>
-           <x>240</x>
-           <y>330</y>
+           <x>160</x>
+           <y>230</y>
            <width>41</width>
            <height>25</height>
           </rect>
@@ -1342,8 +1944,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="frog_label">
          <property name="geometry">
           <rect>
-           <x>400</x>
-           <y>330</y>
+           <x>320</x>
+           <y>230</y>
            <width>41</width>
            <height>25</height>
           </rect>
@@ -1375,8 +1977,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="grasshoppers_label">
          <property name="geometry">
           <rect>
-           <x>540</x>
-           <y>330</y>
+           <x>460</x>
+           <y>230</y>
            <width>111</width>
            <height>25</height>
           </rect>
@@ -1408,8 +2010,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="canary_label">
          <property name="geometry">
           <rect>
-           <x>720</x>
-           <y>330</y>
+           <x>640</x>
+           <y>230</y>
            <width>61</width>
            <height>25</height>
           </rect>
@@ -1441,8 +2043,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="xylophone_label">
          <property name="geometry">
           <rect>
-           <x>250</x>
-           <y>330</y>
+           <x>170</x>
+           <y>230</y>
            <width>91</width>
            <height>21</height>
           </rect>
@@ -1459,8 +2061,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="drums_label">
          <property name="geometry">
           <rect>
-           <x>420</x>
-           <y>330</y>
+           <x>340</x>
+           <y>230</y>
            <width>61</width>
            <height>21</height>
           </rect>
@@ -1477,8 +2079,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="piano_label">
          <property name="geometry">
           <rect>
-           <x>580</x>
-           <y>330</y>
+           <x>500</x>
+           <y>230</y>
            <width>81</width>
            <height>21</height>
           </rect>
@@ -1495,8 +2097,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="flute_label">
          <property name="geometry">
           <rect>
-           <x>750</x>
-           <y>330</y>
+           <x>670</x>
+           <y>230</y>
            <width>51</width>
            <height>21</height>
           </rect>
@@ -1513,8 +2115,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni1">
          <property name="geometry">
           <rect>
-           <x>150</x>
-           <y>0</y>
+           <x>70</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1537,8 +2139,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni2">
          <property name="geometry">
           <rect>
-           <x>230</x>
-           <y>0</y>
+           <x>150</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1561,8 +2163,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_animal1">
          <property name="geometry">
           <rect>
-           <x>250</x>
-           <y>0</y>
+           <x>170</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1585,8 +2187,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_music1">
          <property name="geometry">
           <rect>
-           <x>270</x>
-           <y>0</y>
+           <x>190</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1609,8 +2211,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni3">
          <property name="geometry">
           <rect>
-           <x>310</x>
-           <y>0</y>
+           <x>230</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1633,8 +2235,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni4">
          <property name="geometry">
           <rect>
-           <x>390</x>
-           <y>0</y>
+           <x>310</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1657,8 +2259,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_animal2">
          <property name="geometry">
           <rect>
-           <x>410</x>
-           <y>0</y>
+           <x>330</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1681,8 +2283,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_music2">
          <property name="geometry">
           <rect>
-           <x>430</x>
-           <y>0</y>
+           <x>350</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1705,8 +2307,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni5">
          <property name="geometry">
           <rect>
-           <x>470</x>
-           <y>0</y>
+           <x>390</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1729,8 +2331,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_ecg">
          <property name="geometry">
           <rect>
-           <x>510</x>
-           <y>0</y>
+           <x>430</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1753,8 +2355,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni6">
          <property name="geometry">
           <rect>
-           <x>550</x>
-           <y>0</y>
+           <x>470</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1777,8 +2379,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_animal3">
          <property name="geometry">
           <rect>
-           <x>570</x>
-           <y>0</y>
+           <x>490</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1801,8 +2403,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni8">
          <property name="geometry">
           <rect>
-           <x>710</x>
-           <y>0</y>
+           <x>630</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1825,8 +2427,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni7">
          <property name="geometry">
           <rect>
-           <x>630</x>
-           <y>0</y>
+           <x>550</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1849,8 +2451,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_music3">
          <property name="geometry">
           <rect>
-           <x>590</x>
-           <y>0</y>
+           <x>510</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1873,8 +2475,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_music4">
          <property name="geometry">
           <rect>
-           <x>750</x>
-           <y>0</y>
+           <x>670</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1897,8 +2499,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_animal4">
          <property name="geometry">
           <rect>
-           <x>730</x>
-           <y>0</y>
+           <x>650</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1921,8 +2523,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni10">
          <property name="geometry">
           <rect>
-           <x>870</x>
-           <y>0</y>
+           <x>790</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1945,8 +2547,8 @@ margin: -15px 0px;
         <widget class="QLabel" name="amp_uni9">
          <property name="geometry">
           <rect>
-           <x>790</x>
-           <y>0</y>
+           <x>710</x>
+           <y>10</y>
            <width>21</width>
            <height>21</height>
           </rect>
@@ -1976,14 +2578,14 @@ margin: -15px 0px;
        <widget class="QFrame" name="frame_2">
         <property name="minimumSize">
          <size>
-          <width>600</width>
-          <height>400</height>
+          <width>1310</width>
+          <height>250</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>550</width>
-          <height>350</height>
+          <width>1310</width>
+          <height>300</height>
          </size>
         </property>
         <property name="frameShape">
@@ -1995,30 +2597,78 @@ margin: -15px 0px;
         <widget class="QGraphicsView" name="graphicsView_original">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>0</y>
+           <x>20</x>
+           <y>20</y>
            <width>600</width>
-           <height>350</height>
+           <height>200</height>
           </rect>
          </property>
          <property name="minimumSize">
           <size>
            <width>600</width>
-           <height>350</height>
+           <height>200</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>550</width>
-           <height>220</height>
+           <width>650</width>
+           <height>300</height>
           </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pan_btn">
+         <property name="geometry">
+          <rect>
+           <x>710</x>
+           <y>220</y>
+           <width>41</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="speed_up_btn">
+         <property name="geometry">
+          <rect>
+           <x>630</x>
+           <y>220</y>
+           <width>41</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="speed_down_btn">
+         <property name="geometry">
+          <rect>
+           <x>670</x>
+           <y>220</y>
+           <width>41</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
          </property>
         </widget>
         <widget class="QPushButton" name="graph_btn_play">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>350</y>
+           <x>510</x>
+           <y>220</y>
            <width>41</width>
            <height>41</height>
           </rect>
@@ -2039,8 +2689,8 @@ margin: -15px 0px;
         <widget class="QPushButton" name="zoom_in_btn">
          <property name="geometry">
           <rect>
-           <x>40</x>
-           <y>350</y>
+           <x>550</x>
+           <y>220</y>
            <width>41</width>
            <height>41</height>
           </rect>
@@ -2055,8 +2705,8 @@ margin: -15px 0px;
         <widget class="QPushButton" name="zoom_out_btn">
          <property name="geometry">
           <rect>
-           <x>80</x>
-           <y>350</y>
+           <x>590</x>
+           <y>220</y>
            <width>41</width>
            <height>41</height>
           </rect>
@@ -2068,59 +2718,33 @@ margin: -15px 0px;
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QPushButton" name="speed_up_btn">
+        <widget class="QGraphicsView" name="graphicsView_modified">
          <property name="geometry">
           <rect>
-           <x>120</x>
-           <y>350</y>
-           <width>41</width>
-           <height>41</height>
+           <x>680</x>
+           <y>20</y>
+           <width>600</width>
+           <height>200</height>
           </rect>
          </property>
-         <property name="text">
-          <string/>
+         <property name="minimumSize">
+          <size>
+           <width>600</width>
+           <height>200</height>
+          </size>
          </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="speed_down_btn">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>350</y>
-           <width>41</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pan_btn">
-         <property name="geometry">
-          <rect>
-           <x>200</x>
-           <y>350</y>
-           <width>41</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
+         <property name="maximumSize">
+          <size>
+           <width>650</width>
+           <height>300</height>
+          </size>
          </property>
         </widget>
         <widget class="QPushButton" name="reset_btn">
          <property name="geometry">
           <rect>
-           <x>240</x>
-           <y>350</y>
+           <x>750</x>
+           <y>220</y>
            <width>41</width>
            <height>41</height>
           </rect>
@@ -2132,64 +2756,56 @@ margin: -15px 0px;
           <bool>true</bool>
          </property>
         </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QGraphicsView" name="graphicsView_Spectro_original">
+        <property name="minimumSize">
+         <size>
+          <width>400</width>
+          <height>250</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>500</width>
+          <height>250</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGraphicsView" name="graphicsView_spectro_modified">
+        <property name="minimumSize">
+         <size>
+          <width>400</width>
+          <height>250</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>500</width>
+          <height>250</height>
+         </size>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QFrame" name="frame_3">
         <property name="minimumSize">
          <size>
-          <width>600</width>
-          <height>400</height>
+          <width>498</width>
+          <height>298</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>550</width>
-          <height>350</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <widget class="QGraphicsView" name="graphicsView_modified">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>600</width>
-           <height>350</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>600</width>
-           <height>350</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>550</width>
-           <height>220</height>
-          </size>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame">
-        <property name="minimumSize">
-         <size>
-          <width>600</width>
-          <height>400</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>550</width>
-          <height>350</height>
+          <width>500</width>
+          <height>298</height>
          </size>
         </property>
         <property name="frameShape">
@@ -2202,21 +2818,21 @@ margin: -15px 0px;
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
-           <width>600</width>
-           <height>350</height>
+           <y>20</y>
+           <width>421</width>
+           <height>250</height>
           </rect>
          </property>
          <property name="minimumSize">
           <size>
-           <width>600</width>
-           <height>350</height>
+           <width>400</width>
+           <height>250</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>550</width>
-           <height>220</height>
+           <width>500</width>
+           <height>250</height>
           </size>
          </property>
         </widget>
@@ -2224,7 +2840,7 @@ margin: -15px 0px;
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>350</y>
+           <y>270</y>
            <width>41</width>
            <height>41</height>
           </rect>
@@ -2247,8 +2863,8 @@ margin: -15px 0px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1838</width>
-     <height>26</height>
+     <width>1330</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
