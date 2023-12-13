@@ -165,7 +165,8 @@ class MainApp(QMainWindow, MainUI):
         self.all_amp_list = [self.amp_uni1, self.amp_uni2, self.amp_uni3, self.amp_uni4, self.amp_uni5,
                                   self.amp_uni6, self.amp_uni7, self.amp_uni8, self.amp_uni9, self.amp_uni10,
                                   self.amp_animal1, self.amp_animal2, self.amp_animal3, self.amp_animal4,
-                                  self.amp_music1, self.amp_music2, self.amp_music3, self.amp_music4, self.amp_ecg]
+                                  self.amp_music1, self.amp_music2, self.amp_music3, self.amp_music4,
+                                    self.amp_ecg, self.amp_ecg_VT, self.amp_ecg_AF ]
         
         for label in self.all_amp_list:
             label.setStyleSheet("background-color: transparent;")
@@ -173,6 +174,8 @@ class MainApp(QMainWindow, MainUI):
         self.audio_player_components = [self.original_audio_label, self.original_frame, self.play_pause_audio_button,
                                          self.audio_progress, self.modified_audio_label, self.modified_frame,
                                          self.audio_progress_2, self.play_pause_audio_button_2]
+        self.ecg_components = [self.ecg_slider0, self.ecg_slider_VT, self.ecg_slider_AF, self.AF_label,
+                              self.VT_label, self.APC_label, self.amp_ecg_VT, self.amp_ecg, self.amp_ecg_AF]
 
         self.mode_index = 0
         self.Delay_interval = 200
@@ -820,11 +823,10 @@ class MainApp(QMainWindow, MainUI):
                 label.hide()
             for music_label in self.music_labels_list:
                 music_label.hide()
-            self.ecg_slider0.hide()
             for component in self.audio_player_components:
                 component.show()
-
-            self.amp_ecg.hide()
+            for component in self.ecg_components:
+                component.hide()
             self.mode = 3
 
         if self.mode_index == 1:
@@ -846,8 +848,8 @@ class MainApp(QMainWindow, MainUI):
                 animal_label.hide()
             for label in self.amp_animal_list:
                 label.hide()
-            self.ecg_slider0.hide()
-            self.amp_ecg.hide()
+            for component in self.ecg_components:
+                component.hide()
             for component in self.audio_player_components:
                 component.show()
             self.mode = 1
@@ -871,15 +873,15 @@ class MainApp(QMainWindow, MainUI):
                 label.hide()
             for music_label in self.music_labels_list:
                 music_label.hide()
-            self.ecg_slider0.hide()
-            self.amp_ecg.hide()
+            for component in self.ecg_components:
+                component.hide()
             for component in self.audio_player_components:
                 component.show()
             self.mode = 0
 
         if self.mode_index == 3:
-            self.ecg_slider0.show()
-            self.amp_ecg.show()
+            for component in self.ecg_components:
+                component.show()
             for component in self.audio_player_components:
                 component.hide()
             for uni_slider in self.uniform_sliders_list:
