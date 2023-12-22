@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1330</width>
-    <height>948</height>
+    <width>1336</width>
+    <height>962</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -300,91 +300,6 @@ QSlider::handle:horizontal:hover {
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
-        </widget>
-        <widget class="QComboBox" name="comboBox_windowing_2">
-         <property name="geometry">
-          <rect>
-           <x>240</x>
-           <y>110</y>
-           <width>201</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">/* General style for all QComboBox */
-QComboBox {
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    padding-left: 10px;
-}
-
-/* Style for the drop-down area */
-QComboBox::drop-down {
-    border: 0px;
-}
-
-/* Style for the drop-down arrow */
-QComboBox::down-arrow {
-    image: url(C:/Users/delta/OneDrive/Desktop/sampling/.idea/25623.png);
-    width: 12px;
-    height: 12px;
-    margin-right: 15px;
-}</string>
-         </property>
-         <property name="editable">
-          <bool>false</bool>
-         </property>
-         <property name="currentText">
-          <string>Ventricular Trigeminy</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>Ventricular Trigeminy</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Rectagular</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Hanning</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Hamming</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Gaussian</string>
-          </property>
-         </item>
-        </widget>
-        <widget class="QLabel" name="label_3">
-         <property name="geometry">
-          <rect>
-           <x>240</x>
-           <y>80</y>
-           <width>181</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Arrhythmia Type</string>
-         </property>
         </widget>
         <widget class="QLabel" name="modified_audio_label">
          <property name="geometry">
@@ -3067,8 +2982,8 @@ QSlider::handle:vertical:hover {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1330</width>
-     <height>22</height>
+     <width>1336</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
