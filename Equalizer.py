@@ -1,7 +1,7 @@
 import math
 import os
 import matplotlib
-
+import ECGsliders
 matplotlib.use('Qt5Agg')
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
@@ -149,12 +149,6 @@ class MainApp(QMainWindow, MainUI):
         self.music_labels_list = [self.xylophone_label, self.drums_label, self.piano_label, self.flute_label]
 
         for slider in self.all_sliders_list:
-            # slider.setMinimum(0)
-            # slider.setMaximum(2)  
-            # slider.setValue(1)  
-            # slider.setMinimum(0)
-            # slider.setMaximum(20)  # Cover a range where each step represents 0.5 (0 to 20)
-            # slider.setValue(10)  
             slider.setMinimum(0)
             slider.setMaximum(8)  # Multiply by 100
             slider.setValue(4)    # Set default value to 100
@@ -197,7 +191,6 @@ class MainApp(QMainWindow, MainUI):
         self.line = None
         self.ani_2 = None
         self.ani_1 = None
-        # self.ani_11 = None
         self.specific_row = 0
         self.specific_row_2 = 0
         self.index = 0
@@ -459,7 +452,9 @@ class MainApp(QMainWindow, MainUI):
         self.file_path, _ = QFileDialog.getOpenFileName(self, "Open Audio File", os.path.expanduser("~"),
                                                         "Audio Files (*.mp3 *.wav)")
         if self.file_path:
-
+            self.file_name = os.path.basename(self.file_path)  # Extract the file name from the file path
+            print("Selected file name:", self.file_name) 
+            self.list_of_modes = ECGsliders.handle_ecg_slider(self.file_name, self.list_of_modes)
             self.delete()
             self.times_of_modified += 1
             if self.mode != 2:
