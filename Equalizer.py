@@ -398,13 +398,13 @@ class MainApp(QMainWindow, MainUI):
 
     def get_window_size(self):
         current_window = self.check_type_window()
-        print(len(self.std_input.text()))
+        # print(len(self.std_input.text()))
         if len(self.std_input.text()) > 1:
             std = float(self.std_input.text())
         else:
             std = 0
 
-        print(f"std:{std}")
+        # print(f"std:{std}")
 
         self.windowing(current_window, std)
 
@@ -551,6 +551,7 @@ class MainApp(QMainWindow, MainUI):
         self.scenes[figure_index].addWidget(canvas)
 
     def create_frequency_spectrum(self, signal, sigma=0, sr=44100):## coment
+        self.frequencies, self.amplitudes, self.modified_signal_list = self.Fourier_Transform(signal, sr)
         if not self.changed_data:
             print("TTTTTTTT")
             self.axes[2].clear()
@@ -558,12 +559,13 @@ class MainApp(QMainWindow, MainUI):
         else:
             self.axes[2].clear()
             if self.counter_window > 2:
+                print("Create Another window")
                 self.windowing(self.window_name)
 
             self.plot_windowing(sigma)
 
-        # frequencies_bin, amplitudes, signal = self.Fourier_Transform(signal, sr)
-        self.frequencies, self.amplitudes, self.modified_signal_list = self.Fourier_Transform(signal, sr)
+
+
         if len(self.modified_signal_after_inverse) < 1 and not self.Windowing:
             print("HALLO")
             self.y_min, self.y_max = min(self.amplitudes), max(self.amplitudes)
@@ -575,7 +577,7 @@ class MainApp(QMainWindow, MainUI):
     def plot_spectrogram(self, sampling_rate):
         self.fig_spectrogram_original = plt.figure(figsize=(500 / 80, 250 / 80), dpi=80)
         f, t, Sxx = signal.spectrogram(self.data_original, sampling_rate, scaling='spectrum')
-        print(f"f:{Sxx}")
+        # print(f"f:{Sxx}")
         plt.pcolormesh(t, f, np.log10(Sxx))
         plt.ylabel('f [Hz]')
         plt.xlabel('t [sec]')
@@ -657,7 +659,7 @@ class MainApp(QMainWindow, MainUI):
             # Slice the arrays
             data_sliced = data_array[:self.specific_row]
             time_sliced = time_array[:self.specific_row]
-            print(f"length of data:{len(data_array)}")
+            # print(f"length of data:{len(data_array)}")
             self.y_fig_original, self.x_fig_original = data_sliced.tolist(), time_sliced.tolist()
             self.lines[0].set_data(self.x_fig_original, self.y_fig_original)
             if self.specific_row > 1000:
@@ -668,15 +670,15 @@ class MainApp(QMainWindow, MainUI):
         return self.lines[0],
 
     def animate_figures_modified(self, i, length_data, data):
-        print(f"i_2:{i}")
-        print(f"spec:{self.specific_row},{length_data}")
+        # print(f"i_2:{i}")
+        # print(f"spec:{self.specific_row},{length_data}")
         if self.specific_row <= length_data - 1:
             data_array = np.array(data)
             time_array = np.array(self.time)
             # Slice the arrays
             data_sliced = data_array[:self.specific_row]
             time_sliced = time_array[:self.specific_row]
-            print(f"data:{len(data_sliced),len(time_sliced)}")
+            # print(f"data:{len(data_sliced),len(time_sliced)}")
             self.y_fig_modified, self.x_fig_modified = data_sliced.tolist(), time_sliced.tolist()
             self.lines[1].set_data(self.x_fig_modified , self.y_fig_modified)
 
@@ -706,10 +708,10 @@ class MainApp(QMainWindow, MainUI):
         amp = 1
         if len(self.amps_down[mode]) > 0:
             for item in self.amps_down[mode]:
-                print(f"before amp:{item}")
+                # print(f"before amp:{item}")
                 amp *= 1.0/ item
                 print(f"amppp:{amp}")
-                print(f"amp2:{float(amp * modified_amp)}")
+                # print(f"amp2:{float(amp * modified_amp)}")
             self.amps_down[mode] = []
             return float(amp * modified_amp)
         elif  len(self.amps_up[mode]) > 0:
@@ -746,10 +748,10 @@ class MainApp(QMainWindow, MainUI):
         self.modified_signal_list[band_index_negv] = modified_amp * self.modified_signal_list[band_index_negv]
 
         self.modified_signal_after_inverse = ifft(self.modified_signal_list)
-        print(f"modify_data:{self.modified_signal_after_inverse}")
+        # print(f"modify_data:{self.modified_signal_after_inverse}")
         self.modified_signal_after_inverse = np.array(self.modified_signal_after_inverse.real)
 
-        self.create_frequency_spectrum(self.modified_signal_after_inverse)
+        self.create_frequency_spectrum(signal=self.modified_signal_after_inverse,sr=fs)
         QCoreApplication.processEvents()
         if self.mode == 2:
             self.arrhythima()
@@ -772,8 +774,8 @@ class MainApp(QMainWindow, MainUI):
         print("arrived")
         # self.ax_frequecies.clear()
         QCoreApplication.processEvents()
-        data_pos,data_negv,frequencies, amplitudes = self.append_data_band()
-        for item_data, amp_band in zip(self.frequencies, amplitudes):
+        data_pos,data_negv = self.append_data_band()
+        for item_data, amp_band in zip(self.frequencies_window, self.amplitudes_window):
             # print(f"len_window:{len(window)},len_data:{len(item)}")
             # print(f"item:{item}")
             # window = self.padding(window_data, len(item))
@@ -901,7 +903,7 @@ class MainApp(QMainWindow, MainUI):
         self.plot(1, self.time, self.modified_signal_after_inverse, 'r', min(self.data_original)
                   , max(self.data_original))
         # sf.write(r"C:\Users\lama zakaria\Desktop\Equalizer\APC_New.wav",self.modified_signal_after_inverse,samplerate=fs,subtype='FLOAT')
-        self.create_frequency_spectrum(self.modified_signal_after_inverse, 360)
+        # self.create_frequency_spectrum(self.modified_signal_after_inverse, 360)
 
 
     def ecg(self, file_path):
@@ -917,7 +919,7 @@ class MainApp(QMainWindow, MainUI):
     def delete(self):
         if self.times_of_modified >= 1:
             print("file is deleted")
-            print(f"frames:{self.no_of_frames,self.i}")
+            # print(f"frames:{self.no_of_frames,self.i}")
             if self.i < self.no_of_frames - 1:
                 self.ani_1.pause()
             self.no_of_points = 1000
@@ -1107,16 +1109,16 @@ class MainApp(QMainWindow, MainUI):
     def append_data_band(self):
         self.uesd_window = True
         data_band = self.declaretion_mode(self.mode)
-        data_bands_negv, data_bands_pos, self.frequencies, self.amplitudes = [], [], [], []
+        data_bands_negv, data_bands_pos, self.frequencies_window, self.amplitudes_window = [], [], [], []
         for item, value in data_band.items():
             self.uesd_window = True
             data_band_neqv, data_band_pos, frequency, amplitude = self.get_data_band(value)
-            print(f"data_band:{data_band_pos}")
-            self.frequencies.append(frequency)
-            self.amplitudes.append(amplitude)
+            # print(f"data_band:{data_band_pos}")
+            self.frequencies_window.append(frequency)
+            self.amplitudes_window.append(amplitude)
             data_bands_negv.append(data_band_neqv)
             data_bands_pos.append(data_band_pos)
-        return data_bands_negv, data_bands_pos, self.frequencies,self.amplitudes
+        return data_bands_negv, data_bands_pos
     def get_information_data(self):
         if len(self.modified_signal_after_inverse) > 1:
             return len(self.modified_signal_after_inverse), self.modified_signal_after_inverse
@@ -1140,7 +1142,7 @@ class MainApp(QMainWindow, MainUI):
         self.Windowing = True
         self.changed_data = True
         self.window_name = window_name
-        self.counter_window +=1
+        self.counter_window += 1
 
         if self.window_name == "No Window":
             self.changed_data = False
@@ -1148,7 +1150,7 @@ class MainApp(QMainWindow, MainUI):
 
         print("arrived1")
         # data_band = self.declaretion_mode(self.mode)
-        data_bands_negv, data_bands_pos, self.frequencies, amplitudes = self.append_data_band()
+        data_bands_negv, data_bands_pos  = self.append_data_band()
         # for item, value in data_band.items():
         #     self.uesd_window = True
         #     data_band_neqv, data_band_pos, frequency, amplitude = self.get_data_band(value)
@@ -1161,7 +1163,7 @@ class MainApp(QMainWindow, MainUI):
         print("arrived2")
         window_result = self.split_window_to_bands(window_name,sigma,data_bands_pos, data_bands_negv)
         print("arrived7")
-        print(window_result)
+        # print(window_result)
         data_after_windowing = ifft(window_result)
         data_after_windowing = np.array(data_after_windowing.real)
         self.Write_modified_signal(data_after_windowing)
@@ -1193,10 +1195,10 @@ class MainApp(QMainWindow, MainUI):
             window_size = len(data_pos)
             window = self.windows[window_name](window_size, sigma)
             self.data_of_window.append(window)
-            print(f"pos:{len(data_pos)},negv:{len(data_negv)}")
+            # print(f"pos:{len(data_pos)},negv:{len(data_negv)}")
             data_pos_after_multiplication.append(data_pos * window)
             data_negv_after_multiplication.append(data_negv * window)
-        print(f"conv:{data_pos_after_multiplication}")
+        # print(f"conv:{data_pos_after_multiplication}")
         data_after_multiplication = np.concatenate([np.concatenate(data_pos_after_multiplication),
                                                  np.concatenate(data_negv_after_multiplication)
                                                  ])
@@ -1204,13 +1206,13 @@ class MainApp(QMainWindow, MainUI):
         return data_after_multiplication
 
     def get_data_band(self, bands):
-        data_length, data = self.get_information_data()
         # frequencies, amplitudes, data = self.Fourier_Transform(data)
         print(f"band:{bands}")
+        # print(f"freq:{self.frequencies}")
         band_index_pos = np.logical_and(self.frequencies >= bands[0], self.frequencies <= bands[1])
         band_index_negv = np.logical_and(self.frequencies >= bands[3], self.frequencies <= bands[2])
-        print(f"ddd:{data[band_index_pos]}")
-        return data[band_index_negv], data[band_index_pos], self.frequencies[band_index_pos],self.amplitudes[band_index_pos]
+        # print(f"ddd:{data[band_index_pos]}")
+        return self.modified_signal_list[band_index_negv], self.modified_signal_list[band_index_pos], self.frequencies[band_index_pos],self.amplitudes[band_index_pos]
 
 
 
